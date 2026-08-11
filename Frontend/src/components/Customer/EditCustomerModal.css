@@ -1,0 +1,295 @@
+.edit-customer-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.45);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 2000;
+
+    backdrop-filter: blur(4px);
+}
+
+
+.edit-customer-modal {
+
+    width: min(95%, 520px);
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border-radius: 22px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.2);
+
+}
+
+
+/* Header */
+
+.edit-customer-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 24px;
+}
+
+
+.edit-customer-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.edit-customer-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-size: 21px;
+}
+
+
+.edit-customer-title h2 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+    color: #111827;
+}
+
+
+.edit-customer-title p {
+
+    margin: 4px 0 0;
+
+    color: #6b7280;
+
+    font-size: 13px;
+}
+
+
+.edit-customer-close {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f3f4f6;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 17px;
+}
+
+
+.edit-customer-close:hover {
+
+    background: #e5e7eb;
+}
+
+
+/* Form */
+
+.edit-customer-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+.edit-field {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.edit-field label {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+
+.edit-field input,
+.edit-field textarea {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 11px;
+
+    padding: 12px 13px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    font-family: inherit;
+
+    transition: 0.2s;
+}
+
+
+.edit-field input:focus,
+.edit-field textarea:focus {
+
+    border-color: #5b4bff;
+
+    box-shadow:
+        0 0 0 3px rgba(91, 75, 255, 0.1);
+}
+
+
+.edit-field textarea {
+
+    resize: vertical;
+
+    min-height: 80px;
+}
+
+
+/* Buttons */
+
+.edit-customer-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 8px;
+}
+
+
+.edit-cancel-btn,
+.edit-save-btn {
+
+    border: none;
+
+    border-radius: 11px;
+
+    padding: 12px 20px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.edit-cancel-btn {
+
+    background: #f1f5f9;
+
+    color: #334155;
+}
+
+
+.edit-cancel-btn:hover {
+
+    background: #e2e8f0;
+}
+
+
+.edit-save-btn {
+
+    background: #5b4bff;
+
+    color: white;
+}
+
+
+.edit-save-btn:hover {
+
+    background: #4338ca;
+}
+
+
+@media (max-width: 600px) {
+
+    .edit-customer-modal {
+
+        padding: 20px;
+
+        border-radius: 18px;
+
+    }
+
+
+    .edit-customer-actions {
+
+        flex-direction: column-reverse;
+
+    }
+
+
+    .edit-cancel-btn,
+    .edit-save-btn {
+
+        width: 100%;
+
+    }
+
+}

@@ -1,0 +1,106 @@
+.summary-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+
+    margin-bottom:25px;
+}
+
+.summary-header{
+
+    margin-bottom:25px;
+}
+
+.summary-header h2{
+
+    color:#6b7280;
+
+    font-size:18px;
+
+    margin-bottom:8px;
+}
+
+.summary-header h1{
+
+    font-size:42px;
+
+    /* color:#111827; */
+}
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+}
+
+.summary-item{
+
+    padding:18px;
+
+    border-radius:15px;
+
+    text-align:center;
+}
+
+.summary-item p{
+
+    margin-bottom:8px;
+
+    font-size:15px;
+}
+
+.summary-item h3{
+
+    font-size:24px;
+}
+
+.receive{
+
+    background:#ecfdf5;
+
+    color:#16a34a;
+}
+
+.pay{
+
+    background:#fef2f2;
+
+    color:#dc2626;
+}
+
+.worth{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+}
+
+
+@media(max-width:768px){
+
+.summary-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+.positive-balance{
+
+    color:#16a34a;
+
+}
+
+.negative-balance{
+
+    color:#dc2626;
+
+}

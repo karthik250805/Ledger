@@ -1,0 +1,57 @@
+# ===============================
+# Frontend - React / Vite
+# ===============================
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+Frontend/.env.*
+!Frontend/.env.example
+
+# ===============================
+# Backend - Spring Boot / Maven
+# ===============================
+
+Backend/target/
+
+# ===============================
+# Java / Eclipse / STS
+# ===============================
+
+Backend/.classpath
+Backend/.project
+Backend/.settings/
+
+*.class
+
+# ===============================
+# Environment / Secrets
+# ===============================
+
+.env
+.env.*
+!.env.example
+
+application-local.properties
+application-prod.properties
+
+# ===============================
+# Logs
+# ===============================
+
+*.log
+
+# ===============================
+# OS
+# ===============================
+
+.DS_Store
+Thumbs.db
+
+# ===============================
+# VS Code
+# ===============================
+
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json

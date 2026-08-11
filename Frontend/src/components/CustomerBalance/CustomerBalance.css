@@ -1,0 +1,123 @@
+.customer-balance-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    text-align:center;
+
+}
+
+.balance-title{
+
+    color:#6b7280;
+
+    font-size:16px;
+
+    margin-bottom:10px;
+
+}
+
+.customer-balance-card h1{
+
+    font-size:42px;
+
+    margin:10px 0;
+
+}
+
+.positive-balance{
+
+    color:#16a34a;
+
+}
+
+.negative-balance{
+
+    color:#dc2626;
+
+}
+
+.neutral-balance{
+
+    color:#2563eb;
+
+}
+
+.receive-text{
+
+    display:block;
+
+    color:#16a34a;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    margin-bottom:20px;
+
+}
+
+.pay-text{
+
+    display:block;
+
+    color:#dc2626;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    margin-bottom:20px;
+
+}
+
+.settled-text{
+
+    display:block;
+
+    color:#2563eb;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    margin-bottom:20px;
+
+}
+
+.balance-details-btn{
+
+    width:100%;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.balance-details-btn:hover{
+
+    background:#1d4ed8;
+
+}

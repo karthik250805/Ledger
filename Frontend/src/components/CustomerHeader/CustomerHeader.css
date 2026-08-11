@@ -1,0 +1,223 @@
+.customer-header{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:18px 22px;
+
+    background:white;
+
+    border-radius:20px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    margin-bottom:20px;
+
+}
+
+.customer-info{
+
+    flex:1;
+
+    margin-left:18px;
+
+}
+
+.customer-info h2{
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+.customer-info p{
+
+    margin-top:6px;
+
+    color:#6b7280;
+
+    font-size:16px;
+
+}
+
+.back-button,
+.edit-button{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:50%;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    color:#2563eb;
+
+    font-size:20px;
+
+}
+
+.back-button:hover,
+.edit-button:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+    transform:scale(1.08);
+
+}
+
+@media(max-width:768px){
+
+.customer-header{
+
+    padding:15px;
+
+}
+
+.customer-info h2{
+
+    font-size:24px;
+
+}
+
+.customer-info p{
+
+    font-size:14px;
+
+}
+
+.back-button,
+.edit-button{
+
+    width:44px;
+
+    height:44px;
+
+    font-size:18px;
+
+}
+
+}
+.customer-details-header {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 18px 22px;
+
+    background: #ffffff;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+
+.customer-back-btn,
+.customer-edit-btn {
+
+    width: 56px;
+
+    height: 56px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 21px;
+
+    transition: 0.2s;
+}
+
+
+.customer-back-btn {
+
+    background: #eef2f7;
+
+    color: #2563eb;
+}
+
+
+.customer-edit-btn {
+
+    margin-left: auto;
+
+    background: #eef2f7;
+
+    color: #2563eb;
+}
+
+
+.customer-back-btn:hover,
+.customer-edit-btn:hover {
+
+    transform: scale(1.05);
+
+    background: #e0e7ff;
+}
+
+
+.customer-header-info {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.customer-header-info h2 {
+
+    margin: 0;
+
+    font-size: 27px;
+
+    color: #111827;
+}
+
+
+.customer-header-info span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #64748b;
+
+    font-size: 15px;
+}

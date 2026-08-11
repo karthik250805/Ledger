@@ -1,0 +1,269 @@
+.transaction-row {
+    display: flex;
+    margin: 18px 0;
+    width: 100%;
+    animation: fadeIn 0.35s ease;
+}
+
+.left-align {
+    justify-content: flex-start;
+}
+
+.right-align {
+    justify-content: flex-end;
+}
+
+.transaction-card {
+    width: 72%;
+    border-radius: 22px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all .25s ease;
+    box-shadow: 0 8px 22px rgba(0,0,0,.08);
+    border: 1px solid rgba(255,255,255,.25);
+    backdrop-filter: blur(14px);
+}
+
+.transaction-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.15);
+}
+
+/* Transaction Colors */
+
+.give {
+    background: linear-gradient(135deg,#fff5f5,#ffe5e5);
+    border-left: 6px solid #ff5b5b;
+}
+
+.receive {
+    background: linear-gradient(135deg,#f3fff6,#dfffe8);
+    border-left: 6px solid #1db954;
+}
+
+.lend {
+    background: linear-gradient(135deg,#f5f3ff,#ece6ff);
+    border-left: 6px solid #7c3aed;
+}
+
+.borrow {
+    background: linear-gradient(135deg,#eef6ff,#ddeeff);
+    border-left: 6px solid #2563eb;
+}
+
+.interest {
+    background: linear-gradient(135deg,#fff8e6,#ffeec2);
+    border-left: 6px solid #ff9800;
+}
+
+.payment {
+    background: linear-gradient(135deg,#eefdf8,#d9fff0);
+    border-left: 6px solid #0f9d58;
+}
+
+/* Top */
+
+.transaction-top{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+}
+
+.transaction-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    flex-shrink:0;
+}
+
+.transaction-title-section{
+    flex:1;
+}
+
+.transaction-title-section h4{
+    margin:0;
+    font-size:19px;
+    font-weight:700;
+    color:#222;
+}
+
+.transaction-title-section p{
+    margin-top:6px;
+    font-size:14px;
+    color:#666;
+    line-height:1.5;
+}
+
+.transaction-amount-section{
+    text-align:right;
+}
+
+.transaction-amount-section h2{
+    margin:0;
+    font-size:28px;
+    font-weight:800;
+    color:#111;
+}
+
+.transaction-amount-section span{
+    display:block;
+    margin-top:5px;
+    color:#777;
+    font-size:13px;
+}
+
+/* Bottom */
+
+.transaction-bottom{
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.outstanding-badge{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 16px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.outstanding-badge .label{
+    opacity:.8;
+}
+
+.outstanding-badge .value{
+    font-size:17px;
+    font-weight:700;
+}
+
+.outstanding-badge .status{
+    font-weight:700;
+}
+
+/* Status */
+
+.positive{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.negative{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.neutral{
+    background:#ececec;
+    color:#555;
+}
+
+.loan-arrow{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    transition:.25s;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+.transaction-card:hover .loan-arrow{
+    transform:translateX(6px);
+    background:#0f172a;
+    color:white;
+}
+
+/* Fade */
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+.transaction-card{
+    width:88%;
+}
+
+.transaction-top{
+    flex-wrap:wrap;
+}
+
+.transaction-amount-section{
+    width:100%;
+    text-align:left;
+    margin-top:12px;
+}
+
+.transaction-amount-section h2{
+    font-size:24px;
+}
+
+.transaction-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+}
+
+.loan-arrow{
+    align-self:flex-end;
+}
+
+}
+
+@media(max-width:600px){
+
+.transaction-card{
+    width:95%;
+    padding:15px;
+}
+
+.transaction-icon{
+    width:45px;
+    height:45px;
+    font-size:18px;
+}
+
+.transaction-title-section h4{
+    font-size:16px;
+}
+
+.transaction-title-section p{
+    font-size:13px;
+}
+
+.transaction-amount-section h2{
+    font-size:21px;
+}
+
+.outstanding-badge{
+    flex-wrap:wrap;
+    border-radius:14px;
+}
+
+}

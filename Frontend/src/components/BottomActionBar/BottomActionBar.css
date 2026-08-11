@@ -1,0 +1,153 @@
+.bottom-action-bar{
+
+    position:fixed;
+
+    bottom:18px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:min(92%,750px);
+
+    background:#ffffff;
+
+    border-radius:24px;
+
+    padding:15px 18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.18);
+
+    z-index:999;
+
+}
+
+.action-btn{
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:8px;
+
+    flex:1;
+
+    transition:.25s;
+
+}
+
+.action-btn:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.action-icon{
+
+    width:58px;
+
+    height:58px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:22px;
+
+    transition:.25s;
+
+}
+
+.action-btn:hover .action-icon{
+
+    transform:scale(1.08);
+
+}
+
+.action-btn span{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+/* Colors */
+
+.give-icon{
+
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+}
+
+.receive-icon{
+
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+
+}
+
+.lend-icon{
+
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+
+}
+
+.borrow-icon{
+
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.bottom-action-bar{
+
+    width:96%;
+
+    bottom:10px;
+
+    padding:12px;
+
+}
+
+.action-icon{
+
+    width:50px;
+
+    height:50px;
+
+    font-size:18px;
+
+}
+
+.action-btn span{
+
+    font-size:12px;
+
+}
+
+}

@@ -1,0 +1,417 @@
+.loan-transaction-section {
+
+    margin-top: 20px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+
+}
+
+.loan-transaction-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+.loan-transaction-header h3 {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    color: #111827;
+
+}
+
+.loan-transaction-header span {
+
+    font-size: 13px;
+
+    color: #6b7280;
+
+}
+
+
+/* Timeline */
+
+.loan-timeline {
+
+    position: relative;
+
+}
+
+.loan-timeline-item {
+
+    position: relative;
+
+    display: flex;
+
+    gap: 14px;
+
+    padding-bottom: 18px;
+
+}
+
+
+/* Timeline Icon */
+
+.loan-timeline-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+    min-width: 44px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 2;
+
+    font-size: 16px;
+
+}
+
+
+/* Timeline line */
+
+.timeline-line {
+
+    position: absolute;
+
+    left: 21px;
+
+    top: 44px;
+
+    bottom: 0;
+
+    width: 2px;
+
+    background: #e5e7eb;
+
+}
+
+
+/* Transaction Card */
+
+.loan-transaction-card {
+
+    flex: 1;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    padding: 15px;
+
+    background: #ffffff;
+
+    transition: .25s;
+
+}
+
+.loan-transaction-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
+
+}
+
+
+/* Top */
+
+.loan-tx-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+.loan-tx-top h4 {
+
+    margin: 0;
+
+    font-size: 15px;
+
+    color: #111827;
+
+}
+
+.loan-tx-top p {
+
+    margin: 4px 0 0;
+
+    color: #6b7280;
+
+    font-size: 13px;
+
+}
+
+.loan-tx-amount {
+
+    font-size: 16px;
+
+    color: #111827;
+
+    white-space: nowrap;
+
+}
+
+
+/* Date */
+
+.loan-tx-date {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+
+}
+
+
+/* Outstanding */
+
+.loan-tx-bottom {
+
+    margin-top: 12px;
+
+    padding-top: 10px;
+
+    border-top: 1px solid #f0f0f0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.loan-tx-bottom span {
+
+    font-size: 12px;
+
+    color: #6b7280;
+
+}
+
+.loan-tx-bottom strong {
+
+    font-size: 14px;
+
+    color: #111827;
+
+}
+
+
+/* Colors */
+
+.loan-tx-lend.loan-timeline-icon {
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+}
+
+.loan-tx-borrow.loan-timeline-icon {
+
+    background: #fff7ed;
+
+    color: #ea580c;
+
+}
+
+.loan-tx-interest.loan-timeline-icon {
+
+    background: #fef3c7;
+
+    color: #d97706;
+
+}
+
+.loan-tx-payment.loan-timeline-icon {
+
+    background: #ecfdf5;
+
+    color: #16a34a;
+
+}
+
+
+/* Card left borders */
+
+.loan-transaction-card.loan-tx-lend {
+
+    border-left: 4px solid #4f46e5;
+
+}
+
+.loan-transaction-card.loan-tx-borrow {
+
+    border-left: 4px solid #ea580c;
+
+}
+
+.loan-transaction-card.loan-tx-interest {
+
+    border-left: 4px solid #d97706;
+
+}
+
+.loan-transaction-card.loan-tx-payment {
+
+    border-left: 4px solid #16a34a;
+
+}
+
+
+/* Loading */
+
+.loan-transaction-loading {
+
+    text-align: center;
+
+    padding: 35px;
+
+    color: #6b7280;
+
+}
+
+
+/* Empty */
+
+.loan-no-transactions {
+
+    text-align: center;
+
+    padding: 40px 20px;
+
+    color: #6b7280;
+
+}
+
+.loan-no-transactions svg {
+
+    font-size: 42px;
+
+    color: #9ca3af;
+
+    margin-bottom: 10px;
+
+}
+
+.loan-no-transactions h4 {
+
+    margin: 5px 0;
+
+    color: #374151;
+
+}
+
+.loan-no-transactions p {
+
+    margin: 0;
+
+    font-size: 14px;
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .loan-transaction-section {
+
+        padding: 15px;
+
+    }
+
+    .loan-transaction-header h3 {
+
+        font-size: 18px;
+
+    }
+
+    .loan-timeline-item {
+
+        gap: 10px;
+
+    }
+
+    .loan-timeline-icon {
+
+        width: 38px;
+
+        height: 38px;
+
+        min-width: 38px;
+
+    }
+
+    .timeline-line {
+
+        left: 18px;
+
+        top: 38px;
+
+    }
+
+    .loan-transaction-card {
+
+        padding: 13px;
+
+    }
+
+    .loan-tx-top {
+
+        flex-direction: column;
+
+        gap: 6px;
+
+    }
+
+    .loan-tx-amount {
+
+        font-size: 15px;
+
+    }
+
+    .loan-tx-bottom {
+
+        align-items: flex-start;
+
+        gap: 8px;
+
+        flex-direction: column;
+
+    }
+
+}

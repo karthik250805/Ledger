@@ -1,0 +1,562 @@
+.loan-action-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.48);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 10000;
+
+}
+
+
+.loan-action-modal {
+
+    width: 100%;
+
+    max-width: 540px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.22);
+
+    animation: loanModalOpen 0.25s ease;
+
+}
+
+
+/* Header */
+
+.loan-action-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 22px;
+
+}
+
+
+.loan-action-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+}
+
+
+.loan-action-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+
+}
+
+
+.lend-modal-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+        );
+
+}
+
+
+.borrow-modal-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
+
+}
+
+
+.loan-action-title h2 {
+
+    margin: 0;
+
+    font-size: 21px;
+
+    color: #111827;
+
+}
+
+
+.loan-action-title p {
+
+    margin: 4px 0 0;
+
+    color: #6b7280;
+
+    font-size: 12px;
+
+}
+
+
+.loan-action-close {
+
+    width: 38px;
+
+    height: 38px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+}
+
+
+/* Form */
+
+.loan-action-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+}
+
+
+.loan-field {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+.loan-field label {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+}
+
+
+/* Amount */
+
+.loan-amount-input {
+
+    height: 52px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 14px;
+
+}
+
+
+.loan-amount-input:focus-within {
+
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(79, 70, 229, 0.10);
+
+}
+
+
+.loan-amount-input span {
+
+    font-size: 19px;
+
+    font-weight: 600;
+
+    color: #6b7280;
+
+    margin-right: 8px;
+
+}
+
+
+.loan-amount-input input {
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 19px;
+
+    font-weight: 600;
+
+}
+
+
+/* Select / inputs */
+
+.loan-field select,
+.loan-field > input {
+
+    width: 100%;
+
+    height: 48px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    padding: 0 13px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 14px;
+
+}
+
+
+.loan-field select:focus,
+.loan-field > input:focus {
+
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(79, 70, 229, 0.10);
+
+}
+
+
+/* Interest rate */
+
+.loan-rate-input {
+
+    height: 48px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 13px;
+
+}
+
+
+.loan-rate-input:focus-within {
+
+    border-color: #4f46e5;
+
+}
+
+
+.loan-rate-input input {
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 15px;
+
+}
+
+
+.loan-rate-input span {
+
+    color: #6b7280;
+
+    font-weight: 600;
+
+}
+
+
+/* Dates */
+
+.loan-date-grid {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+}
+
+
+/* Notes */
+
+.loan-field textarea {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    outline: none;
+
+    resize: vertical;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+}
+
+
+.loan-field textarea:focus {
+
+    border-color: #4f46e5;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(79, 70, 229, 0.10);
+
+}
+
+
+/* Buttons */
+
+.loan-action-buttons {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1.5fr;
+
+    gap: 10px;
+
+    margin-top: 4px;
+
+}
+
+
+.loan-cancel-btn,
+.loan-submit-btn {
+
+    height: 48px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.loan-cancel-btn {
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+}
+
+
+.lend-submit {
+
+    background: #4f46e5;
+
+    color: #ffffff;
+
+}
+
+
+.lend-submit:hover {
+
+    background: #4338ca;
+
+}
+
+
+.borrow-submit {
+
+    background: #d97706;
+
+    color: #ffffff;
+
+}
+
+
+.borrow-submit:hover {
+
+    background: #b45309;
+
+}
+
+
+/* Animation */
+
+@keyframes loanModalOpen {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(15px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .loan-action-modal {
+
+        max-height: 92vh;
+
+        padding: 20px;
+
+        border-radius: 20px;
+
+    }
+
+
+    .loan-date-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .loan-action-title h2 {
+
+        font-size: 19px;
+
+    }
+    
+
+}
+.calculated-date {
+
+    width: 100%;
+
+    height: 48px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 0 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    background: #f8fafc;
+
+    color: #4f46e5;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
