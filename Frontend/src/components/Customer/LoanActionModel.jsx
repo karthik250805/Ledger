@@ -19,6 +19,7 @@ const LoanActionModal = ({
   const isLend = type === "LEND";
 
 
+  
   const [principalAmount, setPrincipalAmount] =
     useState("");
 
@@ -485,14 +486,10 @@ const LoanActionModal = ({
 
 
               <input
-                type="date"
-                value={loanDate}
-                onChange={(e) =>
-                  setLoanDate(
-                    e.target.value
-                  )
-                }
-              />
+  type="date"
+  value={loanDate}
+  readOnly
+/>
 
             </div>
 

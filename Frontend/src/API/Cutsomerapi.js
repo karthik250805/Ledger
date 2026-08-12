@@ -444,3 +444,57 @@ export const getCustomerHistory = async (customerId) => {
 
     return await response.json();
 };
+
+// =========================
+// DELETE CUSTOMER
+// =========================
+
+export const deleteCustomer = async (customerId) => {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+        throw new Error(
+            "Please login again."
+        );
+    }
+
+    const response = await fetch(
+        `${API_BASE_URL}/customers/${customerId}`,
+        {
+            method: "DELETE",
+
+            headers: {
+                "Authorization":
+                    `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+
+        let message =
+            "Failed to delete customer";
+
+        try {
+
+            const errorData =
+                await response.json();
+
+            if (errorData.message) {
+                message =
+                    errorData.message;
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+        throw new Error(message);
+    }
+
+    return await response.json();
+};

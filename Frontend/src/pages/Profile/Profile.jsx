@@ -1,7 +1,12 @@
 import "./Profile.css";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import {
+    getProfile,
+    updateProfile,
+    changePassword
+} from "../../services/AuthService";
 
 import {
     FaUser,
@@ -17,45 +22,33 @@ import {
 
 import Sidebar from "../../components/SideBar";
 
-
 const Profile = () => {
 
     const navigate = useNavigate();
 
-
     // =====================================================
-    // TEMPORARY USER DATA
-    // Later this will come from API
+    // USER
     // =====================================================
 
-    const [user, setUser] = useState({
+    const [user, setUser] = useState(null);
 
-        name: "Karthik",
+    const [loading, setLoading] =
+        useState(true);
 
-        email: "karthik@example.com",
-
-        phone: "+91 9876543210",
-
-        cashBalance: 25000
-
-    });
-
+    const [error, setError] =
+        useState("");
 
     // =====================================================
     // EDIT PROFILE
     // =====================================================
 
-    const [editMode, setEditMode] = useState(false);
-
+    const [editMode, setEditMode] =
+        useState(false);
 
     const [editData, setEditData] = useState({
-
-        name: user.name,
-
-        phone: user.phone
-
+        name: "",
+        phone: ""
     });
-
 
     // =====================================================
     // CHANGE PASSWORD
@@ -64,17 +57,11 @@ const Profile = () => {
     const [showPasswordForm, setShowPasswordForm] =
         useState(false);
 
-
     const [passwordData, setPasswordData] = useState({
-
         oldPassword: "",
-
         newPassword: "",
-
         confirmPassword: ""
-
     });
-
 
     // =====================================================
     // LOGOUT
@@ -83,6 +70,57 @@ const Profile = () => {
     const [showLogoutPopup, setShowLogoutPopup] =
         useState(false);
 
+    // =====================================================
+    // LOAD PROFILE
+    // =====================================================
+
+    useEffect(() => {
+
+        const loadProfile = async () => {
+
+            try {
+
+                setLoading(true);
+                setError("");
+
+                const response =
+                    await getProfile();
+
+                console.log(
+                    "Profile response:",
+                    response
+                );
+
+                setUser(response.data);
+
+                setEditData({
+                    name: response.data.name || "",
+                    phone: response.data.phone || ""
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load profile:",
+                    error
+                );
+
+                setError(
+                    error?.response?.data?.message ||
+                    "Failed to load profile"
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
+
+        loadProfile();
+
+    }, []);
 
     // =====================================================
     // EDIT PROFILE HANDLERS
@@ -90,47 +128,63 @@ const Profile = () => {
 
     const handleEditChange = (e) => {
 
-        const { name, value } = e.target;
+        const {
+            name,
+            value
+        } = e.target;
 
         setEditData({
-
             ...editData,
-
             [name]: value
-
         });
 
     };
-
 
     const handleSaveProfile = async (e) => {
 
         e.preventDefault();
 
+        try {
 
-        // API will be connected later
+            const response =
+                await updateProfile({
+                    name: editData.name,
+                    phone: editData.phone
+                });
 
-        console.log(
-            "Update profile:",
-            editData
-        );
+            console.log(
+                "Updated profile:",
+                response
+            );
 
+            setUser(response.data);
 
-        setUser({
+            setEditData({
+                name: response.data.name || "",
+                phone: response.data.phone || ""
+            });
 
-            ...user,
+            setEditMode(false);
 
-            name: editData.name,
+            alert(
+                "Profile updated successfully"
+            );
 
-            phone: editData.phone
+        } catch (error) {
 
-        });
+            console.error(
+                "Update profile error:",
+                error
+            );
 
+            alert(
+                error?.response?.data?.message ||
+                "Failed to update profile"
+            );
 
-        setEditMode(false);
+        }
 
     };
-
 
     // =====================================================
     // PASSWORD HANDLERS
@@ -138,23 +192,21 @@ const Profile = () => {
 
     const handlePasswordChange = (e) => {
 
-        const { name, value } = e.target;
+        const {
+            name,
+            value
+        } = e.target;
 
         setPasswordData({
-
             ...passwordData,
-
             [name]: value
-
         });
 
     };
 
-
     const handleChangePassword = async (e) => {
 
         e.preventDefault();
-
 
         if (
             !passwordData.oldPassword ||
@@ -167,8 +219,20 @@ const Profile = () => {
             );
 
             return;
+
         }
 
+        if (
+            passwordData.newPassword.length < 8
+        ) {
+
+            alert(
+                "New password must contain at least 8 characters."
+            );
+
+            return;
+
+        }
 
         if (
             passwordData.newPassword !==
@@ -180,34 +244,46 @@ const Profile = () => {
             );
 
             return;
+
         }
 
+        try {
 
-        // API will be connected later
+            await changePassword({
+                oldPassword:
+                    passwordData.oldPassword,
 
-        console.log(
-            "Change password:",
-            passwordData
-        );
+                newPassword:
+                    passwordData.newPassword
+            });
 
+            alert(
+                "Password changed successfully."
+            );
 
-        alert(
-            "Password change API will be connected here."
-        );
+            setPasswordData({
+                oldPassword: "",
+                newPassword: "",
+                confirmPassword: ""
+            });
 
+            setShowPasswordForm(false);
 
-        setPasswordData({
+        } catch (error) {
 
-            oldPassword: "",
+            console.error(
+                "Change password error:",
+                error
+            );
 
-            newPassword: "",
+            alert(
+                error?.response?.data?.message ||
+                "Failed to change password"
+            );
 
-            confirmPassword: ""
-
-        });
+        }
 
     };
-
 
     // =====================================================
     // LOGOUT
@@ -215,20 +291,13 @@ const Profile = () => {
 
     const handleLogout = () => {
 
-        // Remove JWT token
-
         localStorage.removeItem("token");
 
-
-        // Clear any login-related data if needed
-
         localStorage.removeItem("user");
-
 
         navigate("/");
 
     };
-
 
     // =====================================================
     // FORMAT MONEY
@@ -239,15 +308,39 @@ const Profile = () => {
         return Number(
             value || 0
         ).toLocaleString("en-IN", {
-
             minimumFractionDigits: 2,
-
             maximumFractionDigits: 2
-
         });
 
     };
 
+    // =====================================================
+    // LOADING
+    // =====================================================
+
+    if (loading) {
+
+        return (
+            <div className="profile-page">
+                Loading profile...
+            </div>
+        );
+
+    }
+
+    // =====================================================
+    // ERROR
+    // =====================================================
+
+    if (error || !user) {
+
+        return (
+            <div className="profile-page">
+                {error || "Profile not found"}
+            </div>
+        );
+
+    }
 
     // =====================================================
     // PAGE
@@ -257,13 +350,11 @@ const Profile = () => {
 
         <div className="profile-layout">
 
-
             {/* =================================================
                 SIDEBAR
             ================================================= */}
 
             <Sidebar />
-
 
             {/* =================================================
                 MAIN CONTENT
@@ -272,7 +363,6 @@ const Profile = () => {
             <main className="profile-main-content">
 
                 <div className="profile-page">
-
 
                     {/* =================================================
                         HEADER
@@ -294,13 +384,11 @@ const Profile = () => {
 
                     </div>
 
-
                     {/* =================================================
                         PROFILE CARD
                     ================================================= */}
 
                     <div className="profile-card">
-
 
                         {/* PROFILE HEADER */}
 
@@ -315,7 +403,6 @@ const Profile = () => {
 
                             </div>
 
-
                             <div className="profile-name-section">
 
                                 <h2>
@@ -328,7 +415,6 @@ const Profile = () => {
 
                             </div>
 
-
                             {!editMode && (
 
                                 <button
@@ -336,11 +422,8 @@ const Profile = () => {
                                     onClick={() => {
 
                                         setEditData({
-
-                                            name: user.name,
-
-                                            phone: user.phone
-
+                                            name: user.name || "",
+                                            phone: user.phone || ""
                                         });
 
                                         setEditMode(true);
@@ -358,7 +441,6 @@ const Profile = () => {
 
                         </div>
 
-
                         {/* =================================================
                             PROFILE INFORMATION
                         ================================================= */}
@@ -367,6 +449,7 @@ const Profile = () => {
 
                             <div className="profile-info-grid">
 
+                                {/* FULL NAME */}
 
                                 <div className="profile-info-item">
 
@@ -390,6 +473,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* EMAIL */}
 
                                 <div className="profile-info-item">
 
@@ -413,6 +497,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* PHONE */}
 
                                 <div className="profile-info-item">
 
@@ -436,6 +521,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* CASH BALANCE */}
 
                                 <div className="profile-info-item">
 
@@ -462,11 +548,9 @@ const Profile = () => {
 
                                 </div>
 
-
                             </div>
 
                         ) : (
-
 
                             /* =================================================
                                EDIT PROFILE FORM
@@ -478,6 +562,8 @@ const Profile = () => {
                                     handleSaveProfile
                                 }
                             >
+
+                                {/* NAME */}
 
                                 <div className="profile-form-group">
 
@@ -499,6 +585,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* PHONE */}
 
                                 <div className="profile-form-group">
 
@@ -519,6 +606,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* EMAIL */}
 
                                 <div className="profile-form-group">
 
@@ -540,6 +628,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* BUTTONS */}
 
                                 <div className="profile-form-actions">
 
@@ -550,19 +639,22 @@ const Profile = () => {
                                             setEditMode(false)
                                         }
                                     >
+
                                         <FaTimes />
 
                                         Cancel
-                                    </button>
 
+                                    </button>
 
                                     <button
                                         type="submit"
                                         className="profile-save-btn"
                                     >
+
                                         <FaCheck />
 
                                         Save Changes
+
                                     </button>
 
                                 </div>
@@ -572,7 +664,6 @@ const Profile = () => {
                         )}
 
                     </div>
-
 
                     {/* =================================================
                         SECURITY
@@ -598,7 +689,6 @@ const Profile = () => {
 
                         </div>
 
-
                         {!showPasswordForm ? (
 
                             <button
@@ -623,6 +713,8 @@ const Profile = () => {
                                 }
                             >
 
+                                {/* CURRENT PASSWORD */}
+
                                 <div className="profile-form-group">
 
                                     <label>
@@ -643,6 +735,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* NEW PASSWORD */}
 
                                 <div className="profile-form-group">
 
@@ -664,6 +757,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* CONFIRM PASSWORD */}
 
                                 <div className="profile-form-group">
 
@@ -685,6 +779,7 @@ const Profile = () => {
 
                                 </div>
 
+                                {/* BUTTONS */}
 
                                 <div className="profile-form-actions">
 
@@ -698,13 +793,9 @@ const Profile = () => {
                                             );
 
                                             setPasswordData({
-
                                                 oldPassword: "",
-
                                                 newPassword: "",
-
                                                 confirmPassword: ""
-
                                             });
 
                                         }}
@@ -715,7 +806,6 @@ const Profile = () => {
                                         Cancel
 
                                     </button>
-
 
                                     <button
                                         type="submit"
@@ -735,7 +825,6 @@ const Profile = () => {
                         )}
 
                     </div>
-
 
                     {/* =================================================
                         ACCOUNT
@@ -761,7 +850,6 @@ const Profile = () => {
 
                         </div>
 
-
                         <button
                             className="logout-btn"
                             onClick={() =>
@@ -777,11 +865,9 @@ const Profile = () => {
 
                     </div>
 
-
                 </div>
 
             </main>
-
 
             {/* =================================================
                 LOGOUT CONFIRMATION
@@ -799,17 +885,14 @@ const Profile = () => {
 
                         </div>
 
-
                         <h2>
                             Logout?
                         </h2>
-
 
                         <p>
                             Are you sure you want to logout
                             from your Ledger account?
                         </p>
-
 
                         <div className="logout-modal-actions">
 
@@ -819,9 +902,10 @@ const Profile = () => {
                                     setShowLogoutPopup(false)
                                 }
                             >
-                                Cancel
-                            </button>
 
+                                Cancel
+
+                            </button>
 
                             <button
                                 className="logout-confirm-btn"
@@ -843,8 +927,9 @@ const Profile = () => {
             )}
 
         </div>
-    );
-};
 
+    );
+
+};
 
 export default Profile;

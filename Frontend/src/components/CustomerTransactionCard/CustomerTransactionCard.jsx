@@ -1,4 +1,5 @@
 import "./CustomerTransactionCard.css";
+
 import {
   FaArrowRight,
   FaArrowDown,
@@ -8,10 +9,18 @@ import {
   FaUniversity,
   FaPercentage,
 } from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 
+
 const CustomerTransactionCard = ({ transaction }) => {
+
   const navigate = useNavigate();
+
+
+  // =====================================================
+  // TRANSACTION DIRECTION
+  // =====================================================
 
   const isOutgoing = [
     "GIVE",
@@ -19,10 +28,24 @@ const CustomerTransactionCard = ({ transaction }) => {
     "INTEREST_ACCRUAL",
   ].includes(transaction.transactionType);
 
-  const isLoanTransaction = transaction.loanId !== null;
+
+  // =====================================================
+  // LOAN TRANSACTION
+  // =====================================================
+
+  const isLoanTransaction =
+    transaction.loanId !== null &&
+    transaction.loanId !== undefined;
+
+
+  // =====================================================
+  // TITLE
+  // =====================================================
 
   const getTitle = () => {
+
     switch (transaction.transactionType) {
+
       case "GIVE":
         return "Normal Give";
 
@@ -49,8 +72,15 @@ const CustomerTransactionCard = ({ transaction }) => {
     }
   };
 
+
+  // =====================================================
+  // ICON
+  // =====================================================
+
   const getIcon = () => {
+
     switch (transaction.transactionType) {
+
       case "GIVE":
         return <FaArrowUp />;
 
@@ -77,8 +107,15 @@ const CustomerTransactionCard = ({ transaction }) => {
     }
   };
 
+
+  // =====================================================
+  // CARD CLASS
+  // =====================================================
+
   const getCardClass = () => {
+
     switch (transaction.transactionType) {
+
       case "GIVE":
         return "give";
 
@@ -105,100 +142,265 @@ const CustomerTransactionCard = ({ transaction }) => {
     }
   };
 
-  const outstanding = Number(transaction.outstandingAfterTransaction);
 
-  const balanceText =
-    outstanding > 0
-      ? "To Receive"
-      : outstanding < 0
-      ? "To Pay"
-      : "Settled";
+  // =====================================================
+  // OUTSTANDING AMOUNT
+  // =====================================================
 
-  const balanceClass =
-    outstanding > 0
-      ? "positive"
-      : outstanding < 0
-      ? "negative"
-      : "neutral";
+  const outstanding =
+    Number(
+      transaction.outstandingAfterTransaction
+    ) || 0;
+
+
+  // =====================================================
+  // BALANCE STATUS
+  // =====================================================
+
+  /*
+   * IMPORTANT:
+   *
+   * Customer Summary returns:
+   *
+   * PAYABLE     -> customer has to pay us
+   * RECEIVABLE  -> customer has to receive from us
+   * SETTLED     -> nothing outstanding
+   *
+   * The amount itself may always be positive,
+   * therefore we must NOT determine the status
+   * only from the amount.
+   */
+
+  let balanceText;
+
+  let balanceClass;
+
+
+  if (
+    transaction.balanceStatus === "PAYABLE"
+  ) {
+
+    balanceText = "To Pay";
+
+    balanceClass = "negative";
+
+  } else if (
+    transaction.balanceStatus === "RECEIVABLE"
+  ) {
+
+    balanceText = "To Receive";
+
+    balanceClass = "positive";
+
+  } else if (
+    transaction.balanceStatus === "SETTLED"
+  ) {
+
+    balanceText = "Settled";
+
+    balanceClass = "neutral";
+
+  } else {
+
+    // =================================================
+    // FALLBACK
+    // =================================================
+    // Used for older transactions where
+    // balanceStatus isn't available.
+    // =================================================
+
+    if (outstanding > 0) {
+
+      balanceText = "To Receive";
+
+      balanceClass = "positive";
+
+    } else if (outstanding < 0) {
+
+      balanceText = "To Pay";
+
+      balanceClass = "negative";
+
+    } else {
+
+      balanceText = "Settled";
+
+      balanceClass = "neutral";
+    }
+  }
+
+
+  // =====================================================
+  // DISPLAY OUTSTANDING
+  // =====================================================
+
+  const displayOutstanding =
+    Math.abs(
+      outstanding
+    ).toLocaleString();
+
+
+  // =====================================================
+  // PAGE
+  // =====================================================
 
   return (
+
     <div
       className={`transaction-row ${
-        isOutgoing ? "right-align" : "left-align"
+        isOutgoing
+          ? "right-align"
+          : "left-align"
       }`}
     >
+
       <div
         className={`transaction-card ${getCardClass()}`}
+
         onClick={() => {
+
           if (isLoanTransaction) {
-            navigate(`/loan/${transaction.loanId}`);
+
+            navigate(
+              `/loan/${transaction.loanId}`
+            );
+
           }
+
         }}
       >
+
+        {/* =================================================
+            TOP
+        ================================================= */}
+
         <div className="transaction-top">
 
+
+          {/* ICON */}
+
           <div className="transaction-icon">
+
             {getIcon()}
+
           </div>
+
+
+          {/* TITLE */}
 
           <div className="transaction-title-section">
 
-            <h4>{getTitle()}</h4>
+            <h4>
+              {getTitle()}
+            </h4>
+
 
             {transaction.description && (
-              <p>{transaction.description}</p>
+
+              <p>
+                {transaction.description}
+              </p>
+
             )}
 
           </div>
 
+
+          {/* AMOUNT */}
+
           <div className="transaction-amount-section">
 
             <h2>
-              ₹{Number(transaction.amount).toLocaleString()}
+
+              ₹
+              {Number(
+                transaction.amount
+              ).toLocaleString()}
+
             </h2>
 
-            <span>
-              {new Date(transaction.createdAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
+
+            {transaction.createdAt && (
+
+              <span>
+
+                {new Date(
+                  transaction.createdAt
+                ).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )}
+
+              </span>
+
+            )}
 
           </div>
 
         </div>
+
+
+        {/* =================================================
+            BOTTOM
+        ================================================= */}
 
         <div className="transaction-bottom">
 
-          <div className={`outstanding-badge ${balanceClass}`}>
+
+          {/* OUTSTANDING */}
+
+          <div
+            className={`outstanding-badge ${balanceClass}`}
+          >
 
             <span className="label">
+
               Outstanding
+
             </span>
+
 
             <span className="value">
+
               ₹
-              {Math.abs(
-                Number(transaction.outstandingAfterTransaction)
-              ).toLocaleString()}
+              {displayOutstanding}
+
             </span>
 
+
             <span className="status">
+
               {balanceText}
+
             </span>
 
           </div>
 
+
+          {/* LOAN ARROW */}
+
           {isLoanTransaction && (
+
             <div className="loan-arrow">
+
               <FaArrowRight />
+
             </div>
+
           )}
 
         </div>
+
       </div>
+
     </div>
+
   );
+
 };
+
 
 export default CustomerTransactionCard;

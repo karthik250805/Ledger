@@ -174,6 +174,10 @@ public class CustomerTransactionServiceImpl implements CustomerTransactionServic
 	    transaction.setBalanceAfterTransaction(
 	            customer.getCurrentBalance()
 	    );
+
+	    transaction.setBalanceStatusAfterTransaction(
+	            customer.getBalanceStatus()
+	    );
 	    CustomerTransaction saved =
 	            customerTransactionRepository.save(transaction);
 
@@ -226,6 +230,10 @@ public class CustomerTransactionServiceImpl implements CustomerTransactionServic
 
 	    transaction.setBalanceAfterTransaction(
 	            customer.getCurrentBalance()
+	    );
+
+	    transaction.setBalanceStatusAfterTransaction(
+	            customer.getBalanceStatus()
 	    );
 
 	    CustomerTransaction saved =

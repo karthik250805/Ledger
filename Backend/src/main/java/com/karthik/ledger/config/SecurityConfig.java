@@ -37,6 +37,10 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(
+                    	    "/api/auth/send-otp",
+                    	    "/api/auth/verify-otp"
+                    	).permitAll()
                     .anyRequest().authenticated())
 
             .addFilterBefore(

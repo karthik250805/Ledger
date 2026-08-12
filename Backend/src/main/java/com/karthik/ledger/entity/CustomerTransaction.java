@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import Enum.CustomerBalanceStatus;
 import Enum.CustomerTransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,6 +58,10 @@ public class CustomerTransaction {
 
     @Column(name = "balance_after_transaction")
     private BigDecimal balanceAfterTransaction;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "balance_status_after_transaction", nullable = false)
+    private CustomerBalanceStatus balanceStatusAfterTransaction;
     
     @Column(length = 255)
     private String description;

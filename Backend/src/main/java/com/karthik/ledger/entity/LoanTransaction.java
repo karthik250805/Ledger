@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import Enum.CustomerBalanceStatus;
 import Enum.LoanTransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,6 +56,10 @@ public class LoanTransaction {
     
     @Column(name = "customer_outstanding_after_transaction", nullable = false)
     private BigDecimal customerOutstandingAfterTransaction;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_balance_status_after_transaction",nullable = true)
+    private CustomerBalanceStatus customerBalanceStatusAfterTransaction;
 
     @Column(length = 500)
     private String description;

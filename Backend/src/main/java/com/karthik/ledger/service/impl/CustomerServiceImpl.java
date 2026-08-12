@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.karthik.ledger.dto.CustomerDetailsResponse;
 import com.karthik.ledger.dto.CustomerHistoryResponse;
@@ -28,6 +29,7 @@ import com.karthik.ledger.service.CustomerService;
 import Enum.CustomerBalanceStatus;
 import Enum.CustomerTransactionType;
 import Enum.LoanDirection;
+import Enum.LoanStatus;
 
 @Service
 public class CustomerServiceImpl implements CustomerService{
@@ -134,6 +136,29 @@ public class CustomerServiceImpl implements CustomerService{
 	                .toList();
 	    }
 	    
+	    private String getBalanceStatusName(CustomerBalanceStatus status) {
+	        return status != null ? status.name() : null;
+	    }
+	    private String getLoanBalanceStatusName(
+	            CustomerBalanceStatus status,
+	            BigDecimal signedBalance) {
+
+	        if (status != null) {
+	            return status.name();
+	        }
+
+	        if (signedBalance == null ||
+	                signedBalance.compareTo(BigDecimal.ZERO) == 0) {
+
+	            return CustomerBalanceStatus.SETTLED.name();
+	        }
+
+	        if (signedBalance.compareTo(BigDecimal.ZERO) > 0) {
+	            return CustomerBalanceStatus.RECEIVABLE.name();
+	        }
+
+	        return CustomerBalanceStatus.PAYABLE.name();
+	    }
 
 	    @Override
 	    public List<CustomerHistoryResponse> getCustomerHistory(Long customerId) {
@@ -148,39 +173,37 @@ public class CustomerServiceImpl implements CustomerService{
 	        List<CustomerHistoryResponse> history =
 	                new ArrayList<>();
 
-	        // Normal Transactions
+	        // ==========================================
+	        // NORMAL TRANSACTIONS
+	        // ==========================================
+
 	        customerTransactionRepository
 	                .findByCustomerAndUser(customer, loggedInUser)
 	                .forEach(transaction -> {
 
 	                    history.add(
-
 	                            new CustomerHistoryResponse(
-
 	                                    transaction.getId(),
-	                                    
 	                                    null,
-
 	                                    transaction.getTransactionType().name(),
-
 	                                    transaction.getAmount(),
-
 	                                    transaction.getBalanceAfterTransaction(),
-
 	                                    transaction.getDescription(),
-
 	                                    transaction.getTransactionDate(),
-	                                    
-	                                    transaction.getCreatedAt()
-	           
-
+	                                    transaction.getCreatedAt(),
+	                                    getBalanceStatusName(
+	                                            transaction
+	                                                    .getBalanceStatusAfterTransaction()
+	                                    )
 	                            )
-
 	                    );
 
 	                });
 
-	        // Loan Transactions
+	        // ==========================================
+	        // LOAN TRANSACTIONS
+	        // ==========================================
+
 	        loanTransactionRepository
 	                .findByLoanCustomerAndLoanUser(
 	                        customer,
@@ -189,40 +212,50 @@ public class CustomerServiceImpl implements CustomerService{
 	                .forEach(transaction -> {
 
 	                    history.add(
-
 	                            new CustomerHistoryResponse(
-
 	                                    transaction.getId(),
-	                                    
 	                                    transaction.getLoan().getId(),
-
 	                                    transaction.getTransactionType().name(),
-
 	                                    transaction.getAmount(),
-
 	                                    transaction.getCustomerOutstandingAfterTransaction(),
-
 	                                    transaction.getDescription(),
-
 	                                    transaction.getTransactionDate(),
-	                                    
-	                                    transaction.getCreatedAt()
-
+	                                    transaction.getCreatedAt(),
+	                                    getLoanBalanceStatusName(
+	                                            transaction
+	                                                    .getCustomerBalanceStatusAfterTransaction(),
+	                                            transaction
+	                                                    .getCustomerOutstandingAfterTransaction()
+	                                    )
 	                            )
-
 	                    );
 
 	                });
 
-	        
+	        // ==========================================
+	        // SORT BY DATE
+	        // THEN TIME
+	        // ==========================================
+
 	        history.sort(
-	        	    Comparator.comparing(CustomerHistoryResponse::getTransactionDate)
-	        	              .thenComparing(CustomerHistoryResponse::getCreatedAt)
-	        	             
-	        	);
+	                Comparator
+	                        .comparing(
+	                                CustomerHistoryResponse::getTransactionDate,
+	                                Comparator.nullsLast(
+	                                        Comparator.reverseOrder()
+	                                )
+	                        )
+	                        .thenComparing(
+	                                CustomerHistoryResponse::getCreatedAt,
+	                                Comparator.nullsLast(
+	                                        Comparator.reverseOrder()
+	                                )
+	                        )
+	        );
 
 	        return history;
 	    }
+	  
 	    @Override
 	    public CustomerDetailsResponse getCustomer(Long customerId) {
 
@@ -269,14 +302,91 @@ public class CustomerServiceImpl implements CustomerService{
 	    }
 
 	    @Override
-	    public void deleteCustomer(Long id) {
+	    @Transactional
+	    public void deleteCustomer(Long customerId) {
 
-	        User user = getLoggedInUser();
+	        User loggedInUser = getLoggedInUser();
 
-	        Customer customer = customerRepository
-	                .findByIdAndUser(id, user)
-	                .orElseThrow(() ->
-	                        new RuntimeException("Customer not found"));
+	        Customer customer =
+	                customerRepository
+	                        .findByIdAndUser(
+	                                customerId,
+	                                loggedInUser
+	                        )
+	                        .orElseThrow(
+	                                () -> new RuntimeException(
+	                                        "Customer not found"
+	                                )
+	                        );
+
+
+	        // ==========================================
+	        // CHECK CUSTOMER BALANCE
+	        // ==========================================
+
+	        CustomerSummaryResponse summary =
+	                getCustomerSummary(customerId);
+
+
+	        if (
+	            summary.getOverallBalance() != null
+	            &&
+	            summary.getOverallBalance()
+	                    .compareTo(BigDecimal.ZERO) != 0
+	        ) {
+
+	            throw new RuntimeException(
+	                    "Customer cannot be deleted. " +
+	                    "Please settle the customer balance first."
+	            );
+	        }
+
+
+	        if (
+	            summary.getBalanceStatus() !=
+	            CustomerBalanceStatus.SETTLED
+	        ) {
+
+	            throw new RuntimeException(
+	                    "Customer cannot be deleted. " +
+	                    "Customer balance is not settled."
+	            );
+	        }
+
+
+	        // ==========================================
+	        // CHECK ACTIVE LOANS
+	        // ==========================================
+
+	        List<CustomerLoan> loans =
+	                customerLoanRepository
+	                        .findByCustomerAndUser(
+	                                customer,
+	                                loggedInUser
+	                        );
+
+
+	        boolean hasActiveLoan =
+	                loans.stream()
+	                        .anyMatch(
+	                            loan ->
+	                                loan.getStatus()
+	                                    == LoanStatus.ACTIVE
+	                        );
+
+
+	        if (hasActiveLoan) {
+
+	            throw new RuntimeException(
+	                    "Customer cannot be deleted. " +
+	                    "Please settle all active loans first."
+	            );
+	        }
+
+
+	        // ==========================================
+	        // DELETE CUSTOMER
+	        // ==========================================
 
 	        customerRepository.delete(customer);
 	    }

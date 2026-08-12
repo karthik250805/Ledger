@@ -20,6 +20,7 @@ public class CustomerHistoryResponse {
     private Long loanId;
 
     private String transactionType;
+    
 
     private BigDecimal amount;
 
@@ -31,5 +32,6 @@ public class CustomerHistoryResponse {
     
     private LocalDateTime createdAt;
     
+    private String balanceStatus;
     
 }

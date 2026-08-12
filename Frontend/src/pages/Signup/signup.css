@@ -375,3 +375,46 @@ font-size:35px;
 }
 
 }
+
+.otp-section {
+    width: 100%;
+}
+
+.otp-section .input-box input {
+    text-align: center;
+    letter-spacing: 8px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.otp-success {
+    color: #198754;
+    font-size: 14px;
+    margin: 8px 0;
+    text-align: center;
+}
+
+.resend-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.resend-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.resend-timer {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.signup-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

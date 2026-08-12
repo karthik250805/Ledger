@@ -1,397 +1,195 @@
 import "./CustomerDetails.css";
-
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
+import { useParams, useNavigate } from "react-router-dom";
 import CustomerHeader from "../../components/CustomerHeader/CustomerHeader";
-
-import CustomerTransactionCard
-    from "../../components/CustomerTransactionCard/CustomerTransactionCard";
-
-import BottomActionBar
-    from "../../components/BottomActionBar/BottomActionBar";
-
-import CustomerSummary
-    from "../../components/CustomerSummary/CustomerSummary";
-
-import BalanceSummarySheet
-    from "../../components/customer/BalanceSummarySheet";
-
-import LoanListBottomSheet
-    from "../../components/Customer/LoanListBottomSheet";
-
-import GiveReceiveModal
-    from "../../components/Customer/GiveReceiveModel";
-
-import LoanActionModal
-    from "../../components/Customer/LoanActionModel";
-
-import EditCustomerModal
-    from "../../components/Customer/EditCustomerModal";
-
+import CustomerTransactionCard from "../../components/CustomerTransactionCard/CustomerTransactionCard";
+import BottomActionBar from "../../components/BottomActionBar/BottomActionBar";
+import CustomerSummary from "../../components/CustomerSummary/CustomerSummary";
+import BalanceSummarySheet from "../../components/customer/BalanceSummarySheet";
+import LoanListBottomSheet from "../../components/Customer/LoanListBottomSheet";
+import GiveReceiveModal from "../../components/Customer/GiveReceiveModel";
+import LoanActionModal from "../../components/Customer/LoanActionModel";
+import EditCustomerModal from "../../components/Customer/EditCustomerModal";
 import {
     getCustomer,
     updateCustomer,
+    deleteCustomer,
     getCustomerSummary,
     getCustomerHistory,
     giveMoney,
     receiveMoney
 } from "../../API/Cutsomerapi";
-
 import {
     getCustomerLoans,
     createLoan
 } from "../../API/loanapi";
 
+const applyCurrentBalanceStatus = (historyData, summary) => {
+    if (!Array.isArray(historyData) || historyData.length === 0 || !summary) {
+        return historyData;
+    }
+    return historyData.map((transaction, index) => {
+        if (index === 0) {
+            return {
+                ...transaction,
+                balanceStatus: summary.balanceStatus,
+                outstandingAfterTransaction: summary.overallBalance
+            };
+        }
+        return transaction;
+    });
+
+};
 
 const CustomerDetails = () => {
-
     const { id } = useParams();
-
-
-    // =====================================================
-    // CUSTOMER
-    // =====================================================
+    const navigate = useNavigate();
 
     const [customer, setCustomer] = useState(null);
-
-    const [customerSummary, setCustomerSummary] =
-        useState(null);
-
+    const [customerSummary, setCustomerSummary] = useState(null);
     const [loans, setLoans] = useState([]);
-
     const [history, setHistory] = useState([]);
-
-    const [historyLoading, setHistoryLoading] =
-        useState(true);
-
-
-    // =====================================================
-    // LOADING / ERROR
-    // =====================================================
-
-    const [loading, setLoading] =
-        useState(true);
-
-    const [error, setError] =
-        useState("");
-
-
-    // =====================================================
-    // EDIT CUSTOMER
-    // =====================================================
-
-    const [editOpen, setEditOpen] =
-        useState(false);
-
-
-    // =====================================================
-    // GIVE / RECEIVE
-    // =====================================================
-
-    const [actionType, setActionType] =
-        useState(null);
-
-
-    // =====================================================
-    // LEND / BORROW
-    // =====================================================
-
-    const [loanActionType, setLoanActionType] =
-        useState(null);
-
-
-    // =====================================================
-    // BALANCE SHEET
-    // =====================================================
-
-    const [showBalanceSheet, setShowBalanceSheet] =
-        useState(false);
-
-
-    // =====================================================
-    // LOAN SHEET
-    // =====================================================
-
-    const [showLoanSheet, setShowLoanSheet] =
-        useState(false);
-
-
-    // =====================================================
-    // LOAD CUSTOMER
-    // =====================================================
+    const [historyLoading, setHistoryLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [editOpen, setEditOpen] = useState(false);
+    const [actionType, setActionType] = useState(null);
+    const [loanActionType, setLoanActionType] = useState(null);
+    const [showBalanceSheet, setShowBalanceSheet] = useState(false);
+    const [showLoanSheet, setShowLoanSheet] = useState(false);
 
     useEffect(() => {
-
         const loadCustomer = async () => {
-
             try {
-
                 setLoading(true);
                 setError("");
-
-                console.log(
-                    "Loading customer:",
-                    id
-                );
-
-                const data =
-                    await getCustomer(id);
-
-                console.log(
-                    "Customer Details:",
-                    data
-                );
-
+                const data = await getCustomer(id);
                 setCustomer(data);
-
             } catch (error) {
-
-                console.error(
-                    "Failed to load customer:",
-                    error
-                );
-
-                setError(
-                    error.message ||
-                    "Failed to load customer"
-                );
-
+                console.error("Failed to load customer:", error);
+                setError(error.message || "Failed to load customer");
             } finally {
-
                 setLoading(false);
-
             }
-
         };
-
         loadCustomer();
-
     }, [id]);
 
-
-    // =====================================================
-    // LOAD CUSTOMER SUMMARY
-    // =====================================================
-
     useEffect(() => {
-
         const loadCustomerSummary = async () => {
-
             try {
-
-                const data =
-                    await getCustomerSummary(id);
-
-                console.log(
-                    "Customer Summary:",
-                    data
-                );
-
+                const data = await getCustomerSummary(id);
                 setCustomerSummary(data);
-
             } catch (error) {
-
-                console.error(
-                    "Failed to load customer summary:",
-                    error
-                );
-
+                console.error("Failed to load customer summary:", error);
             }
-
         };
-
         if (id) {
             loadCustomerSummary();
         }
-
     }, [id]);
 
-
-    // =====================================================
-    // LOAD CUSTOMER LOANS
-    // =====================================================
-
     useEffect(() => {
-
         const loadLoans = async () => {
-
             try {
-
-                const data =
-                    await getCustomerLoans(id);
-
-                console.log(
-                    "Customer Loans:",
-                    data
-                );
-
+                const data = await getCustomerLoans(id);
                 setLoans(data);
-
             } catch (error) {
-
-                console.error(
-                    "Failed to load loans:",
-                    error
-                );
-
+                console.error("Failed to load loans:", error);
             }
-
         };
-
         if (id) {
             loadLoans();
         }
-
     }, [id]);
 
-
-    // =====================================================
-    // LOAD CUSTOMER TRANSACTION HISTORY
-    // =====================================================
-
     useEffect(() => {
-
         const loadHistory = async () => {
-
             try {
-
                 setHistoryLoading(true);
-
-                console.log(
-                    "Loading customer history:",
-                    id
+                const data = await getCustomerHistory(id);
+                const summary = await getCustomerSummary(id);
+                const updatedHistory = applyCurrentBalanceStatus(
+                    Array.isArray(data) ? data : [],
+                    summary
                 );
-
-                /*
-                 * GET
-                 * /api/customers/{customerId}/history
-                 */
-
-                const data =
-                    await getCustomerHistory(id);
-
-                console.log(
-                    "Customer History:",
-                    data
-                );
-
-                setHistory(
-                    Array.isArray(data)
-                        ? data
-                        : []
-                );
-
+                setHistory(updatedHistory);
+                setCustomerSummary(summary);
             } catch (error) {
-
-                console.error(
-                    "Failed to load customer history:",
-                    error
-                );
-
+                console.error("Failed to load customer history:", error);
                 setHistory([]);
-
             } finally {
-
                 setHistoryLoading(false);
-
             }
-
         };
-
         if (id) {
             loadHistory();
         }
-
     }, [id]);
 
-
-    // =====================================================
-    // UPDATE CUSTOMER
-    // =====================================================
-
-    const handleUpdateCustomer = async (
-        updatedCustomer
-    ) => {
-
+    const handleUpdateCustomer = async (updatedCustomer) => {
         try {
-
-            console.log(
-                "Update Customer:",
-                updatedCustomer
-            );
-
-            await updateCustomer(
-                id,
-                updatedCustomer
-            );
-
-            const latestCustomer =
-                await getCustomer(id);
-
-            setCustomer(
-                latestCustomer
-            );
-
+            await updateCustomer(id, updatedCustomer);
+            const latestCustomer = await getCustomer(id);
+            setCustomer(latestCustomer);
             setEditOpen(false);
-
-            alert(
-                "Customer updated successfully"
-            );
-
+            alert("Customer updated successfully");
         } catch (error) {
-
-            console.error(
-                "Update customer error:",
-                error
-            );
-
-            alert(
-                error.message ||
-                "Failed to update customer"
-            );
-
+            console.error("Update customer error:", error);
+            alert(error.message || "Failed to update customer");
         }
-
     };
 
+    const handleDeleteCustomer = async () => {
+        const balance = Number(customerSummary?.overallBalance) || 0;
+        const balanceStatus = customerSummary?.balanceStatus || "SETTLED";
+        const hasActiveLoans = loans.some(
+            (loan) => loan.status === "ACTIVE"
+        );
 
-    // =====================================================
-    // GIVE / RECEIVE
-    // =====================================================
+        if (balance !== 0 || balanceStatus !== "SETTLED") {
+            alert(
+                "Customer cannot be deleted.\n\nPlease settle the customer balance first."
+            );
+            return;
+        }
 
-    const handleGiveReceive = async (
-        request
-    ) => {
+        if (hasActiveLoans) {
+            alert(
+                "Customer cannot be deleted.\n\nPlease settle all active loans first."
+            );
+            return;
+        }
+
+        const confirmed = window.confirm(
+            `Are you sure you want to delete ${customer.name}?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
 
         try {
+            await deleteCustomer(id);
+            alert("Customer deleted successfully.");
+            navigate(-1);
+        } catch (error) {
+            console.error("Delete customer error:", error);
+            alert(error.message || "Failed to delete customer");
+        }
+    };
 
-            console.log(
-                "Give / Receive Request:",
-                request
-            );
-
+    const handleGiveReceive = async (request) => {
+        try {
             let response;
 
             if (actionType === "GIVE") {
-
-                response =
-                    await giveMoney(request);
-
-            } else if (
-                actionType === "RECEIVE"
-            ) {
-
-                response =
-                    await receiveMoney(request);
-
+                response = await giveMoney(request);
+            } else if (actionType === "RECEIVE") {
+                response = await receiveMoney(request);
             }
 
-            console.log(
-                "Transaction Created:",
-                response
-            );
-
+            console.log("Transaction Created:", response);
 
             alert(
                 actionType === "GIVE"
@@ -399,435 +197,244 @@ const CustomerDetails = () => {
                     : "Money received successfully"
             );
 
-
-            // Close modal
-
             setActionType(null);
 
+            const updatedSummary = await getCustomerSummary(id);
+            setCustomerSummary(updatedSummary);
 
-            // =================================================
-            // REFRESH CUSTOMER SUMMARY
-            // =================================================
+            const updatedHistory = await getCustomerHistory(id);
 
-            const updatedSummary =
-                await getCustomerSummary(id);
+            const historyWithCurrentStatus =
+                applyCurrentBalanceStatus(
+                    Array.isArray(updatedHistory)
+                        ? updatedHistory
+                        : [],
+                    updatedSummary
+                );
 
-            setCustomerSummary(
-                updatedSummary
-            );
-
-
-            // =================================================
-            // REFRESH CUSTOMER HISTORY
-            // =================================================
-
-            const updatedHistory =
-                await getCustomerHistory(id);
-
-            setHistory(
-                Array.isArray(updatedHistory)
-                    ? updatedHistory
-                    : []
-            );
-
+            setHistory(historyWithCurrentStatus);
         } catch (error) {
-
-            console.error(
-                "Give / Receive error:",
-                error
-            );
-
-            alert(
-                error.message ||
-                "Transaction failed"
-            );
-
+            console.error("Give / Receive error:", error);
+            alert(error.message || "Transaction failed");
         }
-
     };
 
-
-    // =====================================================
-    // CUSTOMER VALUES
-    // =====================================================
-
     const customerBalance =
-        Number(
-            customerSummary?.overallBalance
-        ) || 0;
-
+        Number(customerSummary?.overallBalance) || 0;
 
     const customerBalanceStatus =
-        customerSummary?.balanceStatus ||
-        "SETTLED";
+        customerSummary?.balanceStatus || "SETTLED";
 
+    const activeLoans = loans.filter(
+        (loan) => loan.status === "ACTIVE"
+    );
 
-    // =====================================================
-    // ACTIVE LOANS
-    // =====================================================
-
-    const activeLoans =
-        loans.filter(
-            (loan) =>
-                loan.status === "ACTIVE"
-        );
-
-
-    const activeLoanAmount =
-        activeLoans.reduce(
-            (total, loan) =>
-                total +
-                Number(
-                    loan.totalDue || 0
-                ),
-            0
-        );
-
-
-    // =====================================================
-    // LOADING
-    // =====================================================
+    const activeLoanAmount = activeLoans.reduce(
+        (total, loan) =>
+            total + Number(loan.totalDue || 0),
+        0
+    );
 
     if (loading) {
-
         return (
-
             <div className="customer-details-loading">
-
                 Loading customer...
-
             </div>
-
         );
-
     }
-
-
-    // =====================================================
-    // ERROR
-    // =====================================================
 
     if (error) {
-
         return (
-
             <div className="customer-details-error">
-
-                <p>
-                    {error}
-                </p>
-
-                <button
-                    onClick={() =>
-                        window.history.back()
-                    }
-                >
+                <p>{error}</p>
+                <button onClick={() => window.history.back()}>
                     Go Back
                 </button>
-
             </div>
-
         );
-
     }
-
-
-    // =====================================================
-    // CUSTOMER NOT FOUND
-    // =====================================================
 
     if (!customer) {
-
         return (
-
             <div className="customer-details-error">
-
-                <p>
-                    Customer not found
-                </p>
-
-                <button
-                    onClick={() =>
-                        window.history.back()
-                    }
-                >
+                <p>Customer not found</p>
+                <button onClick={() => window.history.back()}>
                     Go Back
                 </button>
-
             </div>
-
         );
-
     }
 
-
-    // =====================================================
-    // PAGE
-    // =====================================================
-
     return (
-
         <div className="customer-details-page">
-
-
-            {/* =================================================
-                CUSTOMER HEADER
-            ================================================= */}
-
             <CustomerHeader
-
                 customer={customer}
-
-                onEdit={() =>
-                    setEditOpen(true)
-                }
-
+                onEdit={() => setEditOpen(true)}
+                onDelete={handleDeleteCustomer}
             />
-
-
-            {/* =================================================
-                CUSTOMER SUMMARY
-            ================================================= */}
 
             <CustomerSummary
-
-                balance={
-                    customerBalance
-                }
-
-                balanceStatus={
-                    customerBalanceStatus
-                }
-
-                activeLoans={
-                    activeLoans.length
-                }
-
-                activeLoanAmount={
-                    activeLoanAmount
-                }
-
-                onViewBalance={() =>
-                    setShowBalanceSheet(true)
-                }
-
-                onViewLoans={() =>
-                    setShowLoanSheet(true)
-                }
-
+                balance={customerBalance}
+                balanceStatus={customerBalanceStatus}
+                activeLoans={activeLoans.length}
+                activeLoanAmount={activeLoanAmount}
+                onViewBalance={() => setShowBalanceSheet(true)}
+                onViewLoans={() => setShowLoanSheet(true)}
             />
-
-
-            {/* =================================================
-                TRANSACTION HISTORY
-            ================================================= */}
 
             <div className="history-section">
 
-                <div className="history-header">
+    <div className="history-header">
+        <h3>Transaction History</h3>
+    </div>
 
-                    <h3>
-                        Transaction History
-                    </h3>
+    <div className="history-list">
 
-                </div>
+        {historyLoading ? (
 
+            <p>
+                Loading transactions...
+            </p>
 
-                <div className="history-list">
+        ) : history.length === 0 ? (
 
-                    {historyLoading ? (
+            <p>
+                No transactions yet.
+            </p>
 
-                        <p>
-                            Loading transactions...
-                        </p>
+        ) : (
 
-                    ) : history.length === 0 ? (
+            history.map((transaction, index) => {
 
-                        <p>
-                            No transactions yet.
-                        </p>
+                const currentDate =
+                    transaction.transactionDate;
 
-                    ) : (
+                const previousDate =
+                    index > 0
+                        ? history[index - 1].transactionDate
+                        : null;
 
-                        history.map(
-                            (transaction) => (
+                const isNewDate =
+                    currentDate !== previousDate;
 
-                                <CustomerTransactionCard
+                const formatDate = (date) => {
 
-                                    key={
-                                        transaction.transactionId
-                                    }
+                    if (!date) {
+                        return "";
+                    }
 
-                                    transaction={
-                                        transaction
-                                    }
+                    const transactionDate =
+                        new Date(`${date}T00:00:00`);
 
-                                />
+                    const today = new Date();
 
-                            )
-                        )
+                    today.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
 
-                    )}
+                    const yesterday =
+                        new Date(today);
 
-                </div>
+                    yesterday.setDate(
+                        yesterday.getDate() - 1
+                    );
 
-            </div>
+                    if (
+                        transactionDate.getTime() ===
+                        today.getTime()
+                    ) {
+                        return "Today";
+                    }
 
+                    if (
+                        transactionDate.getTime() ===
+                        yesterday.getTime()
+                    ) {
+                        return "Yesterday";
+                    }
 
-            {/* =================================================
-                BALANCE SUMMARY SHEET
-            ================================================= */}
+                    return transactionDate.toLocaleDateString(
+                        "en-IN",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    );
+                };
+
+                return (
+                    <div
+                        key={
+                            transaction.transactionId
+                        }
+                    >
+
+                        {isNewDate && (
+                            <div className="transaction-date-heading">
+                                {formatDate(currentDate)}
+                            </div>
+                        )}
+
+                        <CustomerTransactionCard
+                            transaction={transaction}
+                        />
+
+                    </div>
+                );
+
+            })
+
+        )}
+
+    </div>
+
+</div>
 
             <BalanceSummarySheet
-
-                open={
-                    showBalanceSheet
-                }
-
-                onClose={() =>
-                    setShowBalanceSheet(false)
-                }
-
-                summary={
-                    customerSummary
-                }
-
+                open={showBalanceSheet}
+                onClose={() => setShowBalanceSheet(false)}
+                summary={customerSummary}
             />
-
-
-            {/* =================================================
-                LOAN LIST
-            ================================================= */}
 
             <LoanListBottomSheet
-
-                open={
-                    showLoanSheet
-                }
-
-                onClose={() =>
-                    setShowLoanSheet(false)
-                }
-
-                loans={
-                    activeLoans
-                }
-
+                open={showLoanSheet}
+                onClose={() => setShowLoanSheet(false)}
+                loans={activeLoans}
             />
-
-
-            {/* =================================================
-                BOTTOM ACTION BAR
-            ================================================= */}
 
             <BottomActionBar
-
-                onGive={() => {
-
-                    setActionType(
-                        "GIVE"
-                    );
-
-                }}
-
-                onReceive={() => {
-
-                    setActionType(
-                        "RECEIVE"
-                    );
-
-                }}
-
-                onLend={() => {
-
-                    setLoanActionType(
-                        "LEND"
-                    );
-
-                }}
-
-                onBorrow={() => {
-
-                    setLoanActionType(
-                        "BORROW"
-                    );
-
-                }}
-
+                onGive={() => setActionType("GIVE")}
+                onReceive={() => setActionType("RECEIVE")}
+                onLend={() => setLoanActionType("LEND")}
+                onBorrow={() => setLoanActionType("BORROW")}
             />
 
-
-            {/* =================================================
-                GIVE / RECEIVE MODAL
-            ================================================= */}
-
             <GiveReceiveModal
-
                 open={
                     actionType === "GIVE" ||
                     actionType === "RECEIVE"
                 }
-
-                type={
-                    actionType
-                }
-
-                customerId={
-                    Number(id)
-                }
-
-                onClose={() => {
-
-                    setActionType(null);
-
-                }}
-
-                onSubmit={
-                    handleGiveReceive
-                }
-
+                type={actionType}
+                customerId={Number(id)}
+                onClose={() => setActionType(null)}
+                onSubmit={handleGiveReceive}
             />
 
-
-            {/* =================================================
-                LEND / BORROW MODAL
-            ================================================= */}
-
             <LoanActionModal
-
                 open={
                     loanActionType === "LEND" ||
                     loanActionType === "BORROW"
                 }
-
-                type={
-                    loanActionType
-                }
-
-                customerId={
-                    Number(id)
-                }
-
-                onClose={() => {
-
-                    setLoanActionType(
-                        null
-                    );
-
-                }}
-
+                type={loanActionType}
+                customerId={Number(id)}
+                onClose={() => setLoanActionType(null)}
                 onSubmit={async (request) => {
-
                     try {
-
-                        console.log(
-                            "Loan Request:",
-                            request
-                        );
-
-                        await createLoan(
-                            request
-                        );
+                        await createLoan(request);
 
                         alert(
                             request.loanDirection === "LEND"
@@ -835,36 +442,30 @@ const CustomerDetails = () => {
                                 : "Borrowing created successfully"
                         );
 
-
-                        // Close modal
-
-                        setLoanActionType(
-                            null
-                        );
-
-
-                        // Reload loans
+                        setLoanActionType(null);
 
                         const updatedLoans =
                             await getCustomerLoans(id);
 
-                        setLoans(
-                            updatedLoans
-                        );
-
-
-                        // Reload summary
+                        setLoans(updatedLoans);
 
                         const updatedSummary =
                             await getCustomerSummary(id);
 
-                        setCustomerSummary(
-                            updatedSummary
+                        setCustomerSummary(updatedSummary);
+
+                        const updatedHistory =
+                            await getCustomerHistory(id);
+
+                        setHistory(
+                            applyCurrentBalanceStatus(
+                                Array.isArray(updatedHistory)
+                                    ? updatedHistory
+                                    : [],
+                                updatedSummary
+                            )
                         );
-
-
                     } catch (error) {
-
                         console.error(
                             "Loan creation failed:",
                             error
@@ -874,43 +475,18 @@ const CustomerDetails = () => {
                             error.message ||
                             "Failed to create loan"
                         );
-
                     }
-
                 }}
-
             />
-
-
-            {/* =================================================
-                EDIT CUSTOMER MODAL
-            ================================================= */}
 
             <EditCustomerModal
-
-                open={
-                    editOpen
-                }
-
-                customer={
-                    customer
-                }
-
-                onClose={() =>
-                    setEditOpen(false)
-                }
-
-                onSave={
-                    handleUpdateCustomer
-                }
-
+                open={editOpen}
+                customer={customer}
+                onClose={() => setEditOpen(false)}
+                onSave={handleUpdateCustomer}
             />
-
         </div>
-
     );
-
 };
-
 
 export default CustomerDetails;

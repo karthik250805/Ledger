@@ -316,6 +316,9 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 		loanTransaction.setCustomerOutstandingAfterTransaction(
 		        getSignedCustomerBalance(customer)
 		);
+		loanTransaction.setCustomerBalanceStatusAfterTransaction(
+		        customer.getBalanceStatus()
+		);
 
 		if (request.getLoanDirection() == LoanDirection.LEND) {
 
@@ -687,9 +690,11 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	            getSignedCustomerBalance(customer)
 	    );
 
-	    loanTransactionRepository.save(
-	            transaction
+	    transaction.setCustomerBalanceStatusAfterTransaction(
+	            customer.getBalanceStatus()
 	    );
+
+	    loanTransactionRepository.save(transaction);
 
 
 	    // --------------------------------------------------
@@ -846,6 +851,10 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	    	        getSignedCustomerBalance(customer)
 	    	);
 
+	    	principalTransaction.setCustomerBalanceStatusAfterTransaction(
+	    	        customer.getBalanceStatus()
+	    	);
+
 	    	loanTransactionRepository.save(principalTransaction);
 	    }
 
@@ -879,6 +888,10 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	    	
 	    	interestTransaction.setCustomerOutstandingAfterTransaction(
 	    	        getSignedCustomerBalance(customer)
+	    	);
+
+	    	interestTransaction.setCustomerBalanceStatusAfterTransaction(
+	    	        customer.getBalanceStatus()
 	    	);
 	    	
 
@@ -1117,6 +1130,10 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	                getSignedCustomerBalance(customer)
 	        );
 
+	        principalTransaction.setCustomerBalanceStatusAfterTransaction(
+	                customer.getBalanceStatus()
+	        );
+
 	        loanTransactionRepository.save(
 	                principalTransaction
 	        );
@@ -1164,9 +1181,11 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	                getSignedCustomerBalance(customer)
 	        );
 
-	        loanTransactionRepository.save(
-	                interestTransaction
+	        interestTransaction.setCustomerBalanceStatusAfterTransaction(
+	                customer.getBalanceStatus()
 	        );
+
+	        loanTransactionRepository.save(interestTransaction);
 	    }
 
 
@@ -1209,6 +1228,10 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 
 	        discountTransaction.setCustomerOutstandingAfterTransaction(
 	                getSignedCustomerBalance(customer)
+	        );
+
+	        discountTransaction.setCustomerBalanceStatusAfterTransaction(
+	                customer.getBalanceStatus()
 	        );
 
 	        loanTransactionRepository.save(

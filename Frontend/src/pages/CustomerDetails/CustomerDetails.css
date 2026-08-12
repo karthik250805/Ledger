@@ -10,7 +10,12 @@
     justify-content:center;
 
 }
-
+.transaction-date-heading {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    padding: 0 4px;
+}
 .customer-details-container{
 
     max-width:900px;
