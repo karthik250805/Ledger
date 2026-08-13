@@ -25,4 +25,5 @@ public interface LoanTransactionRepository
             Customer customer,
             User user);
 
+    List<LoanTransaction> findByUser(User user);
 }

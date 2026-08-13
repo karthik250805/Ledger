@@ -7,6 +7,12 @@ const api = axios.create({
     }
 });
 
+export const askChatbot = (message) => {
+    return api.post("/chat", {
+        message: message
+    });
+};
+
 
 // Add JWT token to every request
 api.interceptors.request.use(

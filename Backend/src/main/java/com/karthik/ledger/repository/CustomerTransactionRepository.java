@@ -23,4 +23,6 @@ public interface CustomerTransactionRepository
     List<CustomerTransaction> findByCustomerAndUser(Customer customer,User user);
     
     List<Transaction> findByUserOrderByTransactionDateDesc(User user);
+    
+    List<CustomerTransaction> findByUser(User user);
 }
