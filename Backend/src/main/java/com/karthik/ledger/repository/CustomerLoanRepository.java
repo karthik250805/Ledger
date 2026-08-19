@@ -23,6 +23,8 @@ public interface CustomerLoanRepository extends JpaRepository<CustomerLoan, Long
 
 	  List<CustomerLoan> findByCustomerAndUserAndLoanDirection(
 	          Customer customer, User user, LoanDirection loanDirection);
+	  
+	  List<CustomerLoan> findByCustomerAndUserAndStatus(Customer customer,User user,LoanStatus status);
 	  List<CustomerLoan> findByUser(User user);
 	  
 	  @Query("""

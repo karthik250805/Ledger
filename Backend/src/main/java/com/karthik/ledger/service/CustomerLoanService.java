@@ -10,6 +10,7 @@ import com.karthik.ledger.dto.LoanResponse;
 import com.karthik.ledger.dto.LoanTransactionResponse;
 import com.karthik.ledger.dto.PartialPaymentRequest;
 import com.karthik.ledger.dto.PartialPaymentResponse;
+import com.karthik.ledger.dto.RefreshCustomerInterestRequest;
 //import com.karthik.ledger.dto.PaymentValidationResponse;
 import com.karthik.ledger.dto.RefreshInterestRequest;
 import com.karthik.ledger.dto.RefreshInterestResponse;
@@ -33,6 +34,8 @@ public interface CustomerLoanService {
     FullPaymentResponse fullPayment(FullPaymentRequest request);
     
     List<LoanTransactionResponse> getLoanTransactions(Long loanId);
+    
+    List<RefreshInterestResponse> refreshInterestForCustomer(RefreshCustomerInterestRequest request);
     
 //    PaymentValidationResponse validatePayment(Long loanId,LocalDate paymentDate);
 }

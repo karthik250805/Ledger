@@ -211,7 +211,45 @@ export const refreshInterest = async (request) => {
     return await response.json();
 };
 
+// ================================
+// Refresh All
+// ================================
 
+export const refreshAllLoanInterest = async (
+  customerId,
+  refreshDate
+) => {
+
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/customer-loans/refresh-interest/customer`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+
+      body: JSON.stringify({
+        customerId,
+        refreshDate
+      })
+    }
+  );
+
+  if (!response.ok) {
+
+    const error = await response.text();
+
+    throw new Error(
+      error || "Failed to refresh interest"
+    );
+  }
+
+  return response.json();
+};
 // =====================================================
 // PARTIAL PAYMENT
 // =====================================================

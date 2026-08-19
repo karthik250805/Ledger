@@ -404,6 +404,20 @@ const CustomerDetails = () => {
                 open={showLoanSheet}
                 onClose={() => setShowLoanSheet(false)}
                 loans={activeLoans}
+                customerId={Number(id)}
+                onRefreshSuccess={async () => {
+
+        const updatedLoans =
+            await getCustomerLoans(id);
+
+        setLoans(updatedLoans);
+
+        const updatedSummary =
+            await getCustomerSummary(id);
+
+        setCustomerSummary(updatedSummary);
+
+    }}
             />
 
             <BottomActionBar

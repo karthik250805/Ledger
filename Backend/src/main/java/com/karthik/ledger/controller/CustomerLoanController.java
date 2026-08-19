@@ -19,6 +19,7 @@ import com.karthik.ledger.dto.LoanResponse;
 import com.karthik.ledger.dto.LoanTransactionResponse;
 import com.karthik.ledger.dto.PartialPaymentRequest;
 import com.karthik.ledger.dto.PartialPaymentResponse;
+import com.karthik.ledger.dto.RefreshCustomerInterestRequest;
 import com.karthik.ledger.dto.RefreshInterestRequest;
 import com.karthik.ledger.dto.RefreshInterestResponse;
 import com.karthik.ledger.service.CustomerLoanService;
@@ -106,6 +107,16 @@ public class CustomerLoanController {
 
         return ResponseEntity.ok(
                 customerLoanService.getLoanTransactions(loanId));
+    }
+    @PostMapping("/refresh-interest/customer")
+    public ResponseEntity<List<RefreshInterestResponse>>
+            refreshInterestForCustomer(
+                    @RequestBody RefreshCustomerInterestRequest request) {
+
+        return ResponseEntity.ok(
+                customerLoanService
+                        .refreshInterestForCustomer(request)
+        );
     }
 
 }	

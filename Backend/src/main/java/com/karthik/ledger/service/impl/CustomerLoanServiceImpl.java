@@ -1,10 +1,10 @@
 package com.karthik.ledger.service.impl;
 
 import java.math.BigDecimal;
-
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -20,6 +20,7 @@ import com.karthik.ledger.dto.LoanResponse;
 import com.karthik.ledger.dto.LoanTransactionResponse;
 import com.karthik.ledger.dto.PartialPaymentRequest;
 import com.karthik.ledger.dto.PartialPaymentResponse;
+import com.karthik.ledger.dto.RefreshCustomerInterestRequest;
 import com.karthik.ledger.dto.RefreshInterestRequest;
 import com.karthik.ledger.dto.RefreshInterestResponse;
 import com.karthik.ledger.entity.Customer;
@@ -1266,6 +1267,235 @@ public CustomerLoanServiceImpl(CustomerLoanRepository loanRepository, CustomerRe
 	            .stream()
 	            .map(this::mapToLoanTransactionResponse)
 	            .toList();
+	}
+	private RefreshInterestResponse refreshLoanInterest(
+	        CustomerLoan loan,
+	        Customer customer,
+	        User loggedInUser,
+	        LocalDate refreshDate) {
+
+	    LocalDate lastCalculatedDate =
+	            loan.getLastInterestCalculatedDate();
+
+	    if (refreshDate.isBefore(lastCalculatedDate)) {
+	        throw new RuntimeException(
+	                "Refresh date cannot be before last calculated date"
+	        );
+	    }
+
+	    long days = ChronoUnit.DAYS.between(
+	            lastCalculatedDate,
+	            refreshDate
+	    );
+
+	    if (days == 0) {
+
+	        return new RefreshInterestResponse(
+	                loan.getId(),
+	                0,
+	                BigDecimal.ZERO,
+	                loan.getInterestDue(),
+	                "Interest already refreshed for this date"
+	        );
+	    }
+
+	    BigDecimal principal =
+	            loan.getOutstandingPrincipal();
+
+	    BigDecimal rate =
+	            loan.getInterestRate();
+
+	    BigDecimal interestForOnePeriod =
+	            principal
+	                    .multiply(rate)
+	                    .divide(
+	                            BigDecimal.valueOf(100),
+	                            2,
+	                            RoundingMode.HALF_UP
+	                    );
+
+	    BigDecimal interest;
+
+	    switch (loan.getInterestFrequency()) {
+
+	        case DAILY:
+
+	            interest =
+	                    interestForOnePeriod
+	                            .multiply(
+	                                    BigDecimal.valueOf(days)
+	                            );
+
+	            break;
+
+	        case WEEKLY:
+
+	            BigDecimal weeks =
+	                    BigDecimal.valueOf(days)
+	                            .divide(
+	                                    BigDecimal.valueOf(7),
+	                                    10,
+	                                    RoundingMode.HALF_UP
+	                            );
+
+	            interest =
+	                    interestForOnePeriod
+	                            .multiply(weeks);
+
+	            break;
+
+	        case MONTHLY:
+
+	            BigDecimal months =
+	                    BigDecimal.valueOf(days)
+	                            .divide(
+	                                    BigDecimal.valueOf(30),
+	                                    10,
+	                                    RoundingMode.HALF_UP
+	                            );
+
+	            interest =
+	                    interestForOnePeriod
+	                            .multiply(months);
+
+	            break;
+
+	        case YEARLY:
+
+	            BigDecimal years =
+	                    BigDecimal.valueOf(days)
+	                            .divide(
+	                                    BigDecimal.valueOf(365),
+	                                    10,
+	                                    RoundingMode.HALF_UP
+	                            );
+
+	            interest =
+	                    interestForOnePeriod
+	                            .multiply(years);
+
+	            break;
+
+	        default:
+	            throw new RuntimeException(
+	                    "Unsupported interest frequency"
+	            );
+	    }
+
+	    interest = interest.setScale(
+	            2,
+	            RoundingMode.HALF_UP
+	    );
+
+	    // Update loan interest
+	    loan.setInterestDue(
+	            loan.getInterestDue()
+	                    .add(interest)
+	    );
+
+	    // Update customer's total outstanding
+	    customer.setCurrentBalance(
+	            customer.getCurrentBalance()
+	                    .add(interest)
+	    );
+
+	    // Update last calculated date
+	    loan.setLastInterestCalculatedDate(
+	            refreshDate
+	    );
+
+	    loanRepository.save(loan);
+
+	    // Save loan transaction history
+	    LoanTransaction transaction =
+	            new LoanTransaction();
+
+	    transaction.setUser(loggedInUser);
+
+	    transaction.setLoan(loan);
+
+	    transaction.setTransactionType(
+	            LoanTransactionType.INTEREST_ACCRUAL
+	    );
+
+	    transaction.setAmount(interest);
+
+	    transaction.setDescription(
+	            "Interest refreshed"
+	    );
+
+	    transaction.setTransactionDate(refreshDate);
+
+	    transaction.setOutstandingAfterTransaction(
+	            loan.getOutstandingPrincipal()
+	                    .add(loan.getInterestDue())
+	    );
+
+	    transaction.setCustomerOutstandingAfterTransaction(
+	            getSignedCustomerBalance(customer)
+	    );
+
+	    transaction.setCustomerBalanceStatusAfterTransaction(
+	            customer.getBalanceStatus()
+	    );
+
+	    loanTransactionRepository.save(transaction);
+
+	    return new RefreshInterestResponse(
+	            loan.getId(),
+	            (int) days,
+	            interest,
+	            loan.getInterestDue(),
+	            "Interest refreshed successfully"
+	    );
+	}
+	
+	@Override
+	@Transactional
+	public List<RefreshInterestResponse> refreshInterestForCustomer(
+	        RefreshCustomerInterestRequest request) {
+
+	    User loggedInUser = getLoggedInUser();
+
+	    Customer customer = customerRepository
+	            .findByIdAndUser(
+	                    request.getCustomerId(),
+	                    loggedInUser
+	            )
+	            .orElseThrow(() ->
+	                    new RuntimeException("Customer not found")
+	            );
+
+	    List<CustomerLoan> loans =
+	            loanRepository.findByCustomerAndUserAndStatus(
+	                    customer,
+	                    loggedInUser,
+	                    LoanStatus.ACTIVE
+	            );
+
+	    if (loans.isEmpty()) {
+	        throw new RuntimeException(
+	                "No active loans found for this customer"
+	        );
+	    }
+
+	    List<RefreshInterestResponse> responses = new ArrayList<>();
+
+	    for (CustomerLoan loan : loans) {
+
+	        RefreshInterestResponse response =
+	                refreshLoanInterest(
+	                        loan,
+	                        customer,
+	                        loggedInUser,
+	                        request.getRefreshDate()
+	                );
+
+	        responses.add(response);
+	    }
+	    customerRepository.save(customer);
+
+	    return responses;
 	}
 	
 		
