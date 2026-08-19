@@ -1,4 +1,4 @@
-import "./Sidebar.css";
+import "./SideBar.css";
 
 import {
     FaHome,
