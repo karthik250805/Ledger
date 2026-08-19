@@ -5,7 +5,7 @@ import CustomerHeader from "../../components/CustomerHeader/CustomerHeader";
 import CustomerTransactionCard from "../../components/CustomerTransactionCard/CustomerTransactionCard";
 import BottomActionBar from "../../components/BottomActionBar/BottomActionBar";
 import CustomerSummary from "../../components/CustomerSummary/CustomerSummary";
-import BalanceSummarySheet from "../../components/customer/BalanceSummarySheet";
+import BalanceSummarySheet from "../../components/Customer/BalanceSummarySheet";
 import LoanListBottomSheet from "../../components/Customer/LoanListBottomSheet";
 import GiveReceiveModal from "../../components/Customer/GiveReceiveModel";
 import LoanActionModal from "../../components/Customer/LoanActionModel";
