@@ -19,7 +19,8 @@ public class CorsConfig {
 
         configuration.setAllowedOrigins(
                 List.of(
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+                        "https://ledger-vert-phi.vercel.app"
                 )
         );
 
