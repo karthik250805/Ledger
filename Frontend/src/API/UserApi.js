@@ -18,7 +18,7 @@ export const getUserSummary = async () => {
 
 
     const response = await fetch(
-        `${API_BASE_URL}dashboard`,
+        `${API_BASE_URL}/dashboard`,
         {
             method: "GET",
 
