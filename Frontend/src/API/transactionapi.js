@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:8080/api/transaction";
+import API_URL from "./congif";
+const API_BASE_URL = `${API_URL}/api/transaction`;
 
 
 const getToken = () => {

@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:8080/api";
+import API_URL from "./congif";
+
+const API_BASE_URL = `${API_URL}/api`;
 
 
 /* =========================
@@ -10,13 +12,11 @@ export const addCustomer = async (customerData) => {
     const token =
         localStorage.getItem("token");
 
-
     if (!token) {
         throw new Error(
             "Please login again."
         );
     }
-
 
     const response = await fetch(
         `${API_BASE_URL}/customers`,
@@ -36,7 +36,6 @@ export const addCustomer = async (customerData) => {
             )
         }
     );
-
 
     if (!response.ok) {
 
@@ -62,7 +61,6 @@ export const addCustomer = async (customerData) => {
         throw new Error(message);
     }
 
-
     return await response.json();
 };
 
@@ -76,13 +74,11 @@ export const getCustomers = async () => {
     const token =
         localStorage.getItem("token");
 
-
     if (!token) {
         throw new Error(
             "Please login again."
         );
     }
-
 
     const response = await fetch(
         `${API_BASE_URL}/customers`,
@@ -99,7 +95,6 @@ export const getCustomers = async () => {
         }
     );
 
-
     if (!response.ok) {
 
         if (response.status === 401) {
@@ -109,7 +104,6 @@ export const getCustomers = async () => {
             );
 
         }
-
 
         let message =
             "Failed to load customers";
@@ -133,9 +127,9 @@ export const getCustomers = async () => {
         throw new Error(message);
     }
 
-
     return await response.json();
 };
+
 
 // =========================
 // GET SINGLE CUSTOMER
@@ -165,14 +159,19 @@ export const getCustomer = async (customerId) => {
         let message = "Failed to load customer";
 
         try {
-            const errorData = await response.json();
+
+            const errorData =
+                await response.json();
 
             if (errorData.message) {
-                message = errorData.message;
+                message =
+                    errorData.message;
             }
 
         } catch (error) {
+
             console.log(error);
+
         }
 
         throw new Error(message);
@@ -213,17 +212,23 @@ export const updateCustomer = async (
 
     if (!response.ok) {
 
-        let message = "Failed to update customer";
+        let message =
+            "Failed to update customer";
 
         try {
-            const errorData = await response.json();
+
+            const errorData =
+                await response.json();
 
             if (errorData.message) {
-                message = errorData.message;
+                message =
+                    errorData.message;
             }
 
         } catch (error) {
+
             console.log(error);
+
         }
 
         throw new Error(message);
@@ -231,6 +236,7 @@ export const updateCustomer = async (
 
     return await response.json();
 };
+
 
 // =========================
 // GET CUSTOMER SUMMARY
@@ -294,7 +300,8 @@ export const getCustomerSummary = async (customerId) => {
     return await response.json();
 };
 
-    // =========================
+
+// =========================
 // GIVE MONEY
 // =========================
 
@@ -326,10 +333,12 @@ export const giveMoney = async (request) => {
 
         try {
 
-            const errorData = await response.json();
+            const errorData =
+                await response.json();
 
             if (errorData.message) {
-                message = errorData.message;
+                message =
+                    errorData.message;
             }
 
         } catch (error) {
@@ -376,14 +385,17 @@ export const receiveMoney = async (request) => {
 
     if (!response.ok) {
 
-        let message = "Failed to receive money";
+        let message =
+            "Failed to receive money";
 
         try {
 
-            const errorData = await response.json();
+            const errorData =
+                await response.json();
 
             if (errorData.message) {
-                message = errorData.message;
+                message =
+                    errorData.message;
             }
 
         } catch (error) {
@@ -401,16 +413,20 @@ export const receiveMoney = async (request) => {
     return await response.json();
 };
 
+
 // =========================
 // GET CUSTOMER TRANSACTION HISTORY
 // =========================
 
 export const getCustomerHistory = async (customerId) => {
 
-    const token = localStorage.getItem("token");
+    const token =
+        localStorage.getItem("token");
 
     if (!token) {
-        throw new Error("Please login again.");
+        throw new Error(
+            "Please login again."
+        );
     }
 
     const response = await fetch(
@@ -419,24 +435,31 @@ export const getCustomerHistory = async (customerId) => {
             method: "GET",
 
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization":
+                    `Bearer ${token}`
             }
         }
     );
 
     if (!response.ok) {
 
-        let message = "Failed to load customer history";
+        let message =
+            "Failed to load customer history";
 
         try {
-            const errorData = await response.json();
+
+            const errorData =
+                await response.json();
 
             if (errorData.message) {
-                message = errorData.message;
+                message =
+                    errorData.message;
             }
 
         } catch (error) {
+
             console.error(error);
+
         }
 
         throw new Error(message);
@@ -444,6 +467,7 @@ export const getCustomerHistory = async (customerId) => {
 
     return await response.json();
 };
+
 
 // =========================
 // DELETE CUSTOMER
