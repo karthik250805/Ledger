@@ -87,6 +87,15 @@
     border-radius:20px;
 
 }
+@media (max-width: 768px) {
+
+    .history-section {
+
+        margin-bottom: 180px;
+
+    }
+
+}
 
 /* Mobile */
 

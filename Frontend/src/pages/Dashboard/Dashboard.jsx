@@ -2,6 +2,7 @@ import "./Dashboard.css";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setCache,getCache } from "../../utils/cache";
 
 import {
     FaWallet,
@@ -65,7 +66,7 @@ const Dashboard = () => {
     // LOAD DASHBOARD
     // =====================================================
 
-    const loadDashboard = async () => {
+    const loadDashboard = async (forceRefresh = false) => {
 
         try {
 
@@ -73,6 +74,42 @@ const Dashboard = () => {
 
             setError("");
 
+            // =========================
+            // CHECK CACHE
+            // =========================
+
+            if (!forceRefresh) {
+
+                const cachedDashboard =
+                    getCache("dashboardData");
+
+                const cachedLoanDashboard =
+                    getCache("loanDashboardData");
+
+                if (
+                    cachedDashboard &&
+                    cachedLoanDashboard
+                ) {
+
+                    console.log(
+                        "Loading dashboard from cache..."
+                    );
+
+                    setDashboard(
+                        cachedDashboard
+                    );
+
+                    setLoanDashboard(
+                        cachedLoanDashboard
+                    );
+
+                    return;
+                }
+            }
+
+            // =========================
+            // LOAD MAIN DASHBOARD
+            // =========================
 
             console.log("Loading main dashboard...");
 
@@ -84,9 +121,16 @@ const Dashboard = () => {
                 dashboardData
             );
 
-
             setDashboard(dashboardData);
 
+            setCache(
+                "dashboardData",
+                dashboardData
+            );
+
+            // =========================
+            // LOAD LOAN DASHBOARD
+            // =========================
 
             console.log("Loading loan dashboard...");
 
@@ -98,9 +142,12 @@ const Dashboard = () => {
                 loanData
             );
 
-
             setLoanDashboard(loanData);
 
+            setCache(
+                "loanDashboardData",
+                loanData
+            );
 
         } catch (error) {
 
@@ -113,7 +160,6 @@ const Dashboard = () => {
                 error.message ||
                 "Failed to load dashboard"
             );
-
 
         } finally {
 
@@ -367,7 +413,7 @@ const Dashboard = () => {
 
                         <button
                             className="dashboard-refresh-btn"
-                            onClick={loadDashboard}
+                            onClick={() => loadDashboard(true)}
                         >
 
                             <FaSyncAlt />

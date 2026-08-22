@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa";
 
 import Sidebar from "../../components/SideBar";
+import { getCache, setCache } from "../../utils/cache";
 
 const Profile = () => {
 
@@ -83,6 +84,23 @@ const Profile = () => {
                 setLoading(true);
                 setError("");
 
+                // Check cache first
+                const cachedProfile =
+                    getCache("profileData");
+
+                if (cachedProfile) {
+
+                    setUser(cachedProfile);
+
+                    setEditData({
+                        name: cachedProfile.name || "",
+                        phone: cachedProfile.phone || ""
+                    });
+
+                    return;
+                }
+
+                // If no cache, call backend
                 const response =
                     await getProfile();
 
@@ -97,6 +115,12 @@ const Profile = () => {
                     name: response.data.name || "",
                     phone: response.data.phone || ""
                 });
+
+                // Save profile in cache
+                setCache(
+                    "profileData",
+                    response.data
+                );
 
             } catch (error) {
 
@@ -163,6 +187,12 @@ const Profile = () => {
                 name: response.data.name || "",
                 phone: response.data.phone || ""
             });
+
+            // Update cached profile
+            setCache(
+                "profileData",
+                response.data
+            );
 
             setEditMode(false);
 
@@ -291,14 +321,33 @@ const Profile = () => {
 
     const handleLogout = () => {
 
-        localStorage.removeItem("token");
+    // Remove authentication data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-        localStorage.removeItem("user");
+    // Remove ALL session cache
+    sessionStorage.clear();
 
-        navigate("/");
+    // Remove ALL local storage data
+    localStorage.clear();
 
-    };
+    // Optional: clear browser Cache Storage
+    if ("caches" in window) {
 
+        caches.keys().then((names) => {
+
+            names.forEach((name) => {
+
+                caches.delete(name);
+
+            });
+
+        });
+
+    }
+
+    navigate("/");
+};
     // =====================================================
     // FORMAT MONEY
     // =====================================================

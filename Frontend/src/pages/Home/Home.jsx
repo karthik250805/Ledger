@@ -17,6 +17,7 @@ import {
     getTransactions,
     createTransaction
 } from "../../API/transactionapi";
+import { getCache,setCache  } from "../../utils/cache";
 
 
 export default function Home() {
@@ -84,10 +85,18 @@ export default function Home() {
             await getCustomers();
 
 
-        setCustomers(
+        const updatedCustomers =
             Array.isArray(data)
                 ? data
-                : []
+                : [];
+
+        setCustomers(
+            updatedCustomers
+        );
+
+        setCache(
+            "customersData",
+            updatedCustomers
         );
 
 
@@ -135,6 +144,25 @@ export default function Home() {
 
             try {
 
+                const cachedTransactions =
+                    getCache("transactionsData");
+
+                if (cachedTransactions) {
+
+                    console.log(
+                        "Transactions loaded from cache:",
+                        cachedTransactions
+                    );
+
+                    setTransactions(
+                        Array.isArray(cachedTransactions)
+                            ? cachedTransactions
+                            : []
+                    );
+
+                    return;
+                }
+
                 const data =
                     await getTransactions();
 
@@ -144,11 +172,18 @@ export default function Home() {
                     data
                 );
 
-
-                setTransactions(
+                const transactionList =
                     Array.isArray(data)
                         ? data
-                        : []
+                        : [];
+
+                setTransactions(
+                    transactionList
+                );
+
+                setCache(
+                    "transactionsData",
+                    transactionList
                 );
 
 
@@ -185,10 +220,18 @@ const saveTransaction = async (request) => {
         // 2. Get latest transactions
         const transactionData = await getTransactions();
 
-        setTransactions(
+        const updatedTransactions =
             Array.isArray(transactionData)
                 ? transactionData
-                : []
+                : [];
+
+        setTransactions(
+            updatedTransactions
+        );
+
+        setCache(
+            "transactionsData",
+            updatedTransactions
         );
 
         // 3. Get latest user summary
@@ -209,6 +252,23 @@ const saveTransaction = async (request) => {
             netPosition:
                 Number(summaryData.netPosition) || 0
         });
+
+        setCache(
+            "userSummaryData",
+            {
+                cashBalance:
+                    Number(summaryData.cashBalance) || 0,
+
+                moneyToReceive:
+                    Number(summaryData.moneyToReceive) || 0,
+
+                moneyToPay:
+                    Number(summaryData.moneyToPay) || 0,
+
+                netPosition:
+                    Number(summaryData.netPosition) || 0
+            }
+        );
 
         // 4. Close the transaction form
         setExpenseFormOpen(false);
@@ -275,6 +335,21 @@ const saveTransaction = async (request) => {
 
             try {
 
+                const cachedSummary =
+                    getCache("userSummaryData");
+
+                if (cachedSummary) {
+
+                    console.log(
+                        "User Summary loaded from cache:",
+                        cachedSummary
+                    );
+
+                    setSummary(cachedSummary);
+
+                    return;
+                }
+
                 const data =
                     await getUserSummary();
 
@@ -284,8 +359,7 @@ const saveTransaction = async (request) => {
                     data
                 );
 
-
-                setSummary({
+                const summaryData = {
 
                     cashBalance:
                         Number(
@@ -310,7 +384,16 @@ const saveTransaction = async (request) => {
                             data.netPosition
                         ) || 0
 
-                });
+                };
+
+                setSummary(
+                    summaryData
+                );
+
+                setCache(
+                    "userSummaryData",
+                    summaryData
+                );
 
 
             } catch (error) {
@@ -342,6 +425,25 @@ const saveTransaction = async (request) => {
 
         try {
 
+            const cachedCustomers =
+                getCache("customersData");
+
+            if (cachedCustomers) {
+
+                console.log(
+                    "Customers loaded from cache:",
+                    cachedCustomers
+                );
+
+                setCustomers(
+                    Array.isArray(cachedCustomers)
+                        ? cachedCustomers
+                        : []
+                );
+
+                return;
+            }
+
             const data =
                 await getCustomers();
 
@@ -351,11 +453,18 @@ const saveTransaction = async (request) => {
                 data
             );
 
-
-            setCustomers(
+            const customerList =
                 Array.isArray(data)
                     ? data
-                    : []
+                    : [];
+
+            setCustomers(
+                customerList
+            );
+
+            setCache(
+                "customersData",
+                customerList
             );
 
 
@@ -379,6 +488,91 @@ const saveTransaction = async (request) => {
     /* =========================
        UI
     ========================= */
+    const loadHomeData = async () => {
+
+    try {
+
+        console.log("REFRESH CLICKED - FETCHING FROM SERVER");
+
+        // Remove old cache first
+        localStorage.removeItem("transactionsData");
+        localStorage.removeItem("userSummaryData");
+        localStorage.removeItem("customersData");
+
+        // Fetch fresh data directly from API
+        const [
+            transactionData,
+            summaryResponse,
+            customerData
+        ] = await Promise.all([
+            getTransactions(),
+            getUserSummary(),
+            getCustomers()
+        ]);
+
+        const transactionList =
+            Array.isArray(transactionData)
+                ? transactionData
+                : [];
+
+        const summaryData = {
+            cashBalance:
+                Number(summaryResponse.cashBalance) || 0,
+
+            moneyToReceive:
+                Number(summaryResponse.moneyToReceive) || 0,
+
+            moneyToPay:
+                Number(summaryResponse.moneyToPay) || 0,
+
+            netPosition:
+                Number(summaryResponse.netPosition) || 0
+        };
+
+        const customerList =
+            Array.isArray(customerData)
+                ? customerData
+                : [];
+
+        // Update UI
+        setTransactions(transactionList);
+        setSummary(summaryData);
+        setCustomers(customerList);
+
+        // Store fresh data in cache
+        setCache(
+            "transactionsData",
+            transactionList
+        );
+
+        setCache(
+            "userSummaryData",
+            summaryData
+        );
+
+        setCache(
+            "customersData",
+            customerList
+        );
+
+        console.log(
+            "REFRESH COMPLETED - FRESH DATA:",
+            {
+                transactions: transactionList,
+                summary: summaryData,
+                customers: customerList
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "REFRESH FAILED:",
+            error
+        );
+    }
+};
+
 
     return (
 
@@ -388,6 +582,8 @@ const saveTransaction = async (request) => {
                 onAddCustomer={() =>
                     setOpenCustomerModal(true)
                 }
+                onRefresh={() => {loadHomeData(true);
+}}
             />
 
 
